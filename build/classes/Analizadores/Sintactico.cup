@@ -1,0 +1,93 @@
+package Analizadores; 
+import java_cup.runtime.*;
+
+parser code
+{:
+
+    public static nodo raiz;
+    public int contador=0;
+
+    public void syntax_error(Symbol s)
+    {
+        System.err.println("Error en la Linea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador "+s.value + " no reconocido. Se ha recuperado del error." );
+    }
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception
+    {
+        System.err.println("Error en la Linea " + (s.right+1)+ " Columna "+(s.left+1)+". Identificador " +s.value + " no reconocido.");
+    }
+:}
+
+terminal String conjunto, espacio, admiracion, numeral, dolar, porcentaje, ampersand, comillasimple, parentesisabre, parentesiscierra, asterisco, suma, coma, menos, punto, barrainclinada, dospuntos, puntocoma, menor, igual, mayor, interrogacion, arroba, corchetesabre, corchetescierra, elevado, guionbajo, acentograve, llavesabre, barravertical, llavescierra, tilde;
+terminal String entero, identificador, decimal, palabra;
+
+non terminal INICIO;
+non terminal String EXP;
+non terminal String CONJUNTO;
+non terminal String CADENAS;
+non terminal String VARIOS;
+non terminal String VALOR;
+
+
+start with INICIO;
+
+INICIO::=EXP:var1
+
+EXP  ::= 
+ |  conjunto  dospuntos  CONJUNTO  menos  mayor  VALOR  tilde  VALOR  puntocoma  EXP                     
+ |  conjunto  dospuntos  CONJUNTO  menos  mayor  VALOR  coma  VARIOS  puntocoma  EXP                          
+ |  CONJUNTO:var1  menos  mayor  EXP                                                                                    {:parser.raiz=var1;:};
+ |  punto  llavesabre  CONJUNTO:var1  llavescierra  llavesabre  CONJUNTO:var2  llavescierra  puntocoma  EXP             {:RESULT=new nodo(var1, var2, ".", parser.contador); parser.contador++;:}
+ |  barravertical  llavesabre  CONJUNTO:var1  llavescierra  llavesabre  CONJUNTO:var2  llavescierra  puntocoma  EXP     {:RESULT=new nodo(var1, var2, "|", parser.contador); parser.contador++;:}
+ |  suma  llavesabre  CONJUNTO:var1  llavescierra  puntocoma  EXP                                                       {:RESULT=new nodo(var1, null, "+", parser.contador); parser.contador++;:}
+ |  asterisco  llavesabre  CONJUNTO:var1  llavescierra  puntocoma  EXP                                                  {:RESULT=new nodo(var1, null, "*", parser.contador); parser.contador++;:}
+ |  interrogacion  llavesabre  CONJUNTO:var1  llavescierra  puntocoma  EXP                                              {:RESULT=new nodo(var1, null, "?", parser.contador); parser.contador++;:}
+ |  porcentaje porcentaje porcentaje porcentaje CADENAS                                                                 
+;
+
+CADENAS  ::= 
+ |  CONJUNTO:var1  dospuntos  comilladoble  VALOR:var2  comilladoble  puntocoma  EXP  
+;
+
+CONJUNTO  ::= 
+ |  identificador:var1                                                    {:RESULT=new nodo(null, null, var1, parser.contador); parser.contador++;:}
+ |  palabra:var1                                                          {:RESULT=new nodo(null, null, var1, parser.contador); parser.contador++;:}
+;
+
+VALOR  ::= 
+ |  coma  VALOR
+ |  entero
+ |  palabra
+ |  decimal
+ |  identificador
+ |  conjunto
+ |  espacio
+ |  admiracion
+ |  numeral
+ |  dolar
+ |  porcentaje
+ |  ampersand
+ |  comillasimple
+ |  parentesisabre
+ |  parentesiscierra
+ |  asterisco
+ |  suma
+ |  coma
+ |  menos
+ |  punto
+ |  barrainclinada
+ |  dospuntos
+ |  puntocoma
+ |  menor
+ |  igual
+ |  mayor
+ |  interrogacion
+ |  arroba
+ |  corchetesabre
+ |  corchetescierra
+ |  elevado
+ |  guionbajo
+ |  acentograve
+ |  llavesabre
+ |  barravertical
+ |  llavescierra
+;
