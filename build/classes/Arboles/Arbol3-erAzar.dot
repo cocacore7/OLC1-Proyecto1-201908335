@@ -1,0 +1,19 @@
+digraph G{
+rankdir=UD
+node[shape=box]
+concentrate=true
+nodo39 [ label ="."];
+nodo34 [ label ="+"];
+nodo33[label="simbols"];
+nodo34->nodo33;
+nodo39->nodo34;
+nodo38 [ label ="+"];
+nodo37 [ label ="|"];
+nodo35[label="minus"];
+nodo37->nodo35;
+nodo36[label="mayus"];
+nodo37->nodo36;
+nodo38->nodo37;
+nodo39->nodo38;
+
+}

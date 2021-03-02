@@ -1,24 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package proyecto1c1;
 
-import java.io.BufferedWriter;
-import java.io.File;
+import Analizadores.*;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jflex.SilentExit;
 
-/**
- *
- * @author Coca
- */
 public class Interface extends javax.swing.JFrame {
-
+    //public static ArrayList<error> listaErrores = new ArrayList<error>();
+    public static ArrayList<nodo> Arboles;
+    public static ArrayList<String> NombresA;
     /**
      * Creates new form Interface
      */
@@ -172,10 +166,21 @@ public class Interface extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarActionPerformed
+        Arboles = new ArrayList<nodo>();
+        NombresA = new ArrayList<String>();
         String entrada = txtEntrada.getText();
-        // "/" {return new Symbol(sym.barrainclinada,yyline,yychar, yytext());} 
-        // """ {return new Symbol(sym.comilladoble,yyline,yychar, yytext());} 
-        //Letra
+        try {
+            parser sintactico;
+            sintactico = new parser(new lexico(new StringReader(entrada)));
+            sintactico.parse();
+        } catch (Exception ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (!Arboles.isEmpty()){
+            for (int x=0;x<Arboles.size();x++){
+                graficarArbol(Arboles.get(x),"Arbol"+String.valueOf(x+1)+"-"+NombresA.get(x));
+            }
+        }
     }//GEN-LAST:event_btnAnalizarActionPerformed
 
     private void btnArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnArchivoActionPerformed
@@ -220,6 +225,94 @@ public class Interface extends javax.swing.JFrame {
             }
         });
     }
+    
+    public static void graficarArbol(nodo act, String nombre){
+        FileWriter fichero = null;
+        PrintWriter pw = null;
+        try {
+            fichero = new FileWriter("./src/Arboles/" + nombre + ".dot");
+            pw = new PrintWriter(fichero);
+            pw.println("digraph G{");
+            pw.println("rankdir=UD");
+            pw.println("node[shape=box]");
+            pw.println("concentrate=true");
+            pw.println(act.getCodigoInterno());
+            pw.println("}");
+        } catch (Exception e) {
+            System.out.println("error, no se realizo el archivo");
+        } finally {
+            try {
+                if (null != fichero) {
+                    fichero.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+        try {
+            String[] cmd = new String[5];
+            cmd[0] = "dot";
+            cmd[1] = "-Tpng";
+            cmd[2] = "./src/Arboles/" +nombre + ".dot";
+            cmd[3] = "-o";
+            cmd[4] = "./src/Arboles/" +nombre + ".png";
+
+            Runtime rt = Runtime.getRuntime();
+
+            rt.exec(cmd);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+        }
+
+    }
+    
+    /*public static void generarHTML() throws IOException{
+        FileWriter fichero = null;
+                PrintWriter pw = null;
+                try {
+                    fichero = new FileWriter("./errores.html");
+                    pw = new PrintWriter(fichero);
+                    //comenzamos a escribir el html
+                    pw.println("<html>");
+                    pw.println("<head><title>REPORTE DE ERRORES</title></head>");
+                    pw.println("<body>");
+                    pw.println("<div align=\"center\">");
+                    pw.println("<h1>Reporte de Errores</h1>");
+                    pw.println("<br></br>");
+                    pw.println("<table border=1>");
+                    pw.println("<tr>");
+                    pw.println("<td bgcolor=green>TIPO</td>");
+                    pw.println("<td bgcolor=green>VALOR</td>");
+                    pw.println("<td bgcolor=green>FILA</td>");
+                    pw.println("<td bgcolor=green>COLUMNA</td>");
+                    pw.println("</tr>");
+                    for(int i=0;i<listaErrores.size();i++){
+                        pw.println("<tr>");
+                        pw.println("<td>"+listaErrores.get(i).getTipoError()+"</td>");
+                        pw.println("<td>"+listaErrores.get(i).getValorError()+"</td>");
+                        pw.println("<td>"+listaErrores.get(i).getFila()+"</td>");
+                        pw.println("<td>"+listaErrores.get(i).getColumna()+"</td>");
+                        pw.println("</tr>");
+                    }
+                    pw.println("</table>");
+                    pw.println("</div");
+                    pw.println("</body>");
+                    pw.println("</html>");
+                } catch (Exception e) {
+                }finally{
+                    if(null!=fichero){
+                            fichero.close();
+                    }
+                }
+                try {
+            //Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + "Reportes\\"+"Reporte ErroresL.html");
+            //System.out.println("Final");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAnalizar;

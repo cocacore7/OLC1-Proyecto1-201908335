@@ -1,0 +1,43 @@
+digraph G{
+rankdir=UD
+node[shape=box]
+concentrate=true
+nodo32 [ label ="."];
+nodo14[label="num"];
+nodo32->nodo14;
+nodo31 [ label ="."];
+nodo15[label="num"];
+nodo31->nodo15;
+nodo30 [ label ="."];
+nodo16[label="/"];
+nodo30->nodo16;
+nodo29 [ label ="."];
+nodo17[label="num"];
+nodo29->nodo17;
+nodo28 [ label ="."];
+nodo18[label="num"];
+nodo28->nodo18;
+nodo27 [ label ="."];
+nodo19[label="/"];
+nodo27->nodo19;
+nodo26 [ label ="."];
+nodo20[label="num"];
+nodo26->nodo20;
+nodo25 [ label ="."];
+nodo21[label="num"];
+nodo25->nodo21;
+nodo24 [ label ="."];
+nodo22[label="num"];
+nodo24->nodo22;
+nodo23[label="num"];
+nodo24->nodo23;
+nodo25->nodo24;
+nodo26->nodo25;
+nodo27->nodo26;
+nodo28->nodo27;
+nodo29->nodo28;
+nodo30->nodo29;
+nodo31->nodo30;
+nodo32->nodo31;
+
+}

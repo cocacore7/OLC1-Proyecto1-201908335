@@ -1,9 +1,9 @@
-package Analizadores; 
+package Analizadores;
 import java_cup.runtime.*;
+import proyecto1c1.*;
 
 parser code
 {:
-
     public static nodo raiz;
     public int contador=0;
 
@@ -17,77 +17,97 @@ parser code
     }
 :}
 
-terminal String conjunto, espacio, admiracion, numeral, dolar, porcentaje, ampersand, comillasimple, parentesisabre, parentesiscierra, asterisco, suma, coma, menos, punto, barrainclinada, dospuntos, puntocoma, menor, igual, mayor, interrogacion, arroba, corchetesabre, corchetescierra, elevado, guionbajo, acentograve, llavesabre, barravertical, llavescierra, tilde;
-terminal String entero, identificador, decimal, palabra;
+terminal String especial, letraexp, cadena, conj, coma, comilladoble, admiracion, numeral, dolar;
+terminal String porcentaje, ampersand, comillasimple, parentesisabre,parentesiscierra, asterisco, suma, menos;
+terminal String punto, barrainclinada, dospuntos, puntocoma, menor, igual, mayor, interrogacion;
+terminal String arroba, corchetesabre, corchetescierra, elevado, guionbajo, acentograve;
+terminal String llavesabre, barravertical, llavescierra, pestan;
+terminal String identificador, letra, entero, casa, casb, casc;
 
 non terminal INICIO;
-non terminal String EXP;
 non terminal String CONJUNTO;
-non terminal String CADENAS;
-non terminal String VARIOS;
+non terminal String CUERPOCONJUNTO;
+non terminal String LISTA;
+non terminal String CUERPO1;
+non terminal String CUERPO2;
+non terminal nodo REGULAR;
+non terminal String VALIDARCADENA;
+non terminal nodo EXPRESIONES;
 non terminal String VALOR;
-
 
 start with INICIO;
 
-INICIO::=EXP:var1
+INICIO::=llavesabre CUERPO1 porcentaje porcentaje porcentaje porcentaje CUERPO2 llavescierra {:System.out.println("Funciono");:};
 
-EXP  ::= 
- |  conjunto  dospuntos  CONJUNTO  menos  mayor  VALOR  tilde  VALOR  puntocoma  EXP                     
- |  conjunto  dospuntos  CONJUNTO  menos  mayor  VALOR  coma  VARIOS  puntocoma  EXP                          
- |  CONJUNTO:var1  menos  mayor  EXP                                                                                    {:parser.raiz=var1;:};
- |  punto  llavesabre  CONJUNTO:var1  llavescierra  llavesabre  CONJUNTO:var2  llavescierra  puntocoma  EXP             {:RESULT=new nodo(var1, var2, ".", parser.contador); parser.contador++;:}
- |  barravertical  llavesabre  CONJUNTO:var1  llavescierra  llavesabre  CONJUNTO:var2  llavescierra  puntocoma  EXP     {:RESULT=new nodo(var1, var2, "|", parser.contador); parser.contador++;:}
- |  suma  llavesabre  CONJUNTO:var1  llavescierra  puntocoma  EXP                                                       {:RESULT=new nodo(var1, null, "+", parser.contador); parser.contador++;:}
- |  asterisco  llavesabre  CONJUNTO:var1  llavescierra  puntocoma  EXP                                                  {:RESULT=new nodo(var1, null, "*", parser.contador); parser.contador++;:}
- |  interrogacion  llavesabre  CONJUNTO:var1  llavescierra  puntocoma  EXP                                              {:RESULT=new nodo(var1, null, "?", parser.contador); parser.contador++;:}
- |  porcentaje porcentaje porcentaje porcentaje CADENAS                                                                 
+CUERPO1::=CUERPO1 CONJUNTO
+         |CUERPO1 REGULAR
+         |CONJUNTO
+         |REGULAR;
+
+CUERPO2::=CUERPO2 VALIDARCADENA
+         |VALIDARCADENA;
+
+CONJUNTO::=conj dospuntos identificador menos mayor CUERPOCONJUNTO puntocoma;
+
+VALIDARCADENA::=identificador dospuntos cadena puntocoma;
+
+REGULAR::=identificador:var2 menos mayor EXPRESIONES:var1 puntocoma {:parser.raiz = var1; Interface.Arboles.add(raiz); Interface.NombresA.add(var2);:};
+
+EXPRESIONES::= punto EXPRESIONES:var1 EXPRESIONES:var2              {:RESULT=new nodo(var1, var2, ".", parser.contador); parser.contador++;:}
+              |barravertical EXPRESIONES:var1 EXPRESIONES:var2      {:RESULT=new nodo(var1, var2, "|", parser.contador); parser.contador++;:}
+              |suma EXPRESIONES:var1                                {:RESULT=new nodo(var1, null, "+", parser.contador); parser.contador++;:}
+              |asterisco EXPRESIONES:var1                           {:RESULT=new nodo(var1, null, "*", parser.contador); parser.contador++;:}
+              |interrogacion EXPRESIONES:var1                       {:RESULT=new nodo(var1, null, "?", parser.contador); parser.contador++;:}
+              |letraexp:var1                                        {:RESULT=new nodo(null, null, var1, parser.contador); parser.contador++;:}
+              |cadena:var1                                          {:RESULT=new nodo(null, null, var1, parser.contador); parser.contador++;:}
+              |entero:var1                                          {:RESULT=new nodo(null, null, var1, parser.contador); parser.contador++;:}
+              |especial:var1                                        {:RESULT=new nodo(null, null, var1, parser.contador); parser.contador++;:}
+              |llavesabre identificador:var1 llavescierra           {:RESULT=new nodo(null, null, var1, parser.contador); parser.contador++;:}
 ;
 
-CADENAS  ::= 
- |  CONJUNTO:var1  dospuntos  comilladoble  VALOR:var2  comilladoble  puntocoma  EXP  
-;
+CUERPOCONJUNTO::= LISTA
+                 |casa
+                 |casb
+                 |casc
+                 |VALOR pestan VALOR;
 
-CONJUNTO  ::= 
- |  identificador:var1                                                    {:RESULT=new nodo(null, null, var1, parser.contador); parser.contador++;:}
- |  palabra:var1                                                          {:RESULT=new nodo(null, null, var1, parser.contador); parser.contador++;:}
-;
+LISTA  ::= LISTA coma letra
+          |LISTA coma entero
+          |LISTA coma especial
+          |letra
+          |entero
+          |especial;
 
-VALOR  ::= 
- |  coma  VALOR
- |  entero
- |  palabra
- |  decimal
- |  identificador
- |  conjunto
- |  espacio
- |  admiracion
- |  numeral
- |  dolar
- |  porcentaje
- |  ampersand
- |  comillasimple
- |  parentesisabre
- |  parentesiscierra
- |  asterisco
- |  suma
- |  coma
- |  menos
- |  punto
- |  barrainclinada
- |  dospuntos
- |  puntocoma
- |  menor
- |  igual
- |  mayor
- |  interrogacion
- |  arroba
- |  corchetesabre
- |  corchetescierra
- |  elevado
- |  guionbajo
- |  acentograve
- |  llavesabre
- |  barravertical
- |  llavescierra
-;
+VALOR::=coma
+       |letra
+       |entero
+       |comilladoble
+       |admiracion
+       |numeral
+       |dolar
+       |porcentaje
+       |ampersand
+       |comillasimple
+       |parentesisabre
+       |parentesiscierra
+       |asterisco
+       |suma
+       |menos
+       |punto
+       |barrainclinada
+       |dospuntos
+       |puntocoma
+       |menor
+       |igual
+       |mayor
+       |interrogacion
+       |arroba
+       |corchetesabre
+       |corchetescierra
+       |elevado
+       |guionbajo
+       |acentograve
+       |llavesabre
+       |barravertical
+       |especial
+       |llavescierra;

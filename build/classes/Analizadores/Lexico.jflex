@@ -1,29 +1,47 @@
 package Analizadores;
-import java_cup.runtime.Symbol; 
+import java_cup.runtime.*;
 
 %% 
+
 %class lexico
-%public 
-%line 
-%char 
-%cup 
+%cup
+%public
 %unicode
+%line
+%char
+%ignorecase
 
 %init{ 
 	yyline = 1; 
 	yychar = 1; 
 %init} 
 
-BLANCOS=[ \r\t]+
+BLANCOS=[ \t\r]+
+CADENACOMILLASDOBLES= [\"]([^\"\n]|(\\\"))*[\"]
+IDEN=[a-zA-Z]+["_"|0-9|a-z|A-Z]* 
+COMLIN=("//".*\r\n)|("//".*\n)|("//".*\r)
+COMMLIN="<!""!"*([^!>]|[^!]">"|"!"[^>])*"!"*"!>"
 D=[0-9]+
-PALABRA=[a-zA-Z]+
-IDEN=[a-zA-Z] ([a-zA-Z]|[0-9])* 
-DD = [0-9]+ "." [0-9]+
+LETRA=[a-zA-Z]
+ESPECIAL=("\\""n"|"\\""\'"|"\\""\"")
+LETRAEXPREG=\"[A-Z]|[a-z]|[0-9]\"
+CA=[0-9]"~"[0-9]
+CB=[a-z]"~"[a-z]
+CC=[A-Z]"~"[A-Z]
 
 %%
 
-"CONJ" {return new Symbol(sym.conjunto,yyline,yychar, yytext());}
-" " {return new Symbol(sym.espacio,yyline,yychar, yytext());}
+{COMLIN}                {}
+{COMMLIN}               {}
+{LETRA}                 {return new Symbol(sym.letra,yycolumn, yyline, yytext());}
+{D}                     {return new Symbol(sym.entero,yycolumn, yyline, yytext());} 
+{ESPECIAL}              {return new Symbol(sym.especial,yyline,yychar, yytext());}
+{LETRAEXPREG}           {return new Symbol(sym.letraexp,yyline,yychar, (yytext()).substring(1,yytext().length()-1));}
+{CADENACOMILLASDOBLES}  {return new Symbol(sym.cadena,yyline,yychar, (yytext()).substring(1,yytext().length()-1));}
+
+"CONJ" {return new Symbol(sym.conj,yyline,yychar, yytext());}
+"," {return new Symbol(sym.coma,yyline,yychar, yytext());}
+"\"" {return new Symbol(sym.comilladoble,yyline,yychar, yytext());} 
 "!" {return new Symbol(sym.admiracion,yyline,yychar, yytext());} 
 "#" {return new Symbol(sym.numeral,yyline,yychar, yytext());} 
 "$" {return new Symbol(sym.dolar,yyline,yychar, yytext());} 
@@ -33,8 +51,7 @@ DD = [0-9]+ "." [0-9]+
 "(" {return new Symbol(sym.parentesisabre,yyline,yychar, yytext());} 
 ")" {return new Symbol(sym.parentesiscierra,yyline,yychar, yytext());} 
 "*" {return new Symbol(sym.asterisco,yyline,yychar, yytext());} 
-"+" {return new Symbol(sym.suma,yyline,yychar, yytext());} 
-"," {return new Symbol(sym.coma,yyline,yychar, yytext());} 
+"+" {return new Symbol(sym.suma,yyline,yychar, yytext());}  
 "-" {return new Symbol(sym.menos,yyline,yychar, yytext());} 
 "." {return new Symbol(sym.punto,yyline,yychar, yytext());} 
 "/" {return new Symbol(sym.barrainclinada,yyline,yychar, yytext());} 
@@ -53,16 +70,17 @@ DD = [0-9]+ "." [0-9]+
 "{" {return new Symbol(sym.llavesabre,yyline,yychar, yytext());}
 "|" {return new Symbol(sym.barravertical,yyline,yychar, yytext());}
 "}" {return new Symbol(sym.llavescierra,yyline,yychar, yytext());}
-"~" {return new Symbol(sym.tilde,yyline,yychar, yytext());}
+"~" {return new Symbol(sym.pestan,yyline,yychar, yytext());}
 
 \n {yychar=1;}
 
-{BLANCOS} {} 
-{D} {return new Symbol(sym.entero,yyline,yychar, yytext());} 
-{PALABRA} {return new Symbol(sym.palabra,yyline,yychar, yytext());}
-{IDEN} {return new Symbol(sym.identificador,yyline,yychar, yytext());}
-{DD}   {return new Symbol(sym.decimal, yycolumn, yyline, yytext());}
+{BLANCOS}   {} 
+{IDEN}      {return new Symbol(sym.identificador,yycolumn, yyline, yytext());}
+{CA}        {return new Symbol(sym.casa, yycolumn, yyline, yytext());}
+{CB}        {return new Symbol(sym.casb, yycolumn, yyline, yytext());}
+{CC}        {return new Symbol(sym.casc, yycolumn, yyline, yytext());}
+
 
 .   {
-	    System.err.println("Error lexico: "+yytext()+ " Linea:"+(yyline)+" Columna:"+(yycolumn));
+	    System.err.println("Error lexico: "+yytext()+ " Linea:"+(yyline)+" Columna:"+(yychar));
     }
