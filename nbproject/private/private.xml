@@ -4,9 +4,7 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/usuario/OneDrive/Documentos/NetBeansProjects/Proyecto1C1/src/proyecto1c1/Interface.java</file>
-            <file>file:/C:/Users/usuario/OneDrive/Documentos/NetBeansProjects/Proyecto1C1/src/Analizadores/Lexico.jflex</file>
-            <file>file:/C:/Users/usuario/OneDrive/Documentos/NetBeansProjects/Proyecto1C1/src/Analizadores/Sintactico.cup</file>
-            <file>file:/C:/Users/usuario/OneDrive/Documentos/NetBeansProjects/Proyecto1C1/src/Analizadores/Analizadores.java</file>
+            <file>file:/C:/Users/usuario/OneDrive/Documentos/NetBeansProjects/Proyecto1C1/src/Analizadores/nodo.java</file>
         </group>
     </open-files>
 </project-private>

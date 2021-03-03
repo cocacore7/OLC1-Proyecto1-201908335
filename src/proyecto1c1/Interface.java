@@ -10,9 +10,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Interface extends javax.swing.JFrame {
-    //public static ArrayList<error> listaErrores = new ArrayList<error>();
     public static ArrayList<nodo> Arboles;
     public static ArrayList<String> NombresA;
+    public static ArrayList<error> Errores;
+    public static ArrayList<String> Hojas;
+    public static ArrayList<String> Siguientes;
+    public static ArrayList<String> Estados;
+    public static ArrayList<String> Terminales;
     /**
      * Creates new form Interface
      */
@@ -166,8 +170,9 @@ public class Interface extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarActionPerformed
-        Arboles = new ArrayList<nodo>();
-        NombresA = new ArrayList<String>();
+        Arboles = new ArrayList<>();
+        NombresA = new ArrayList<>();
+        Errores = new ArrayList<>();
         String entrada = txtEntrada.getText();
         try {
             parser sintactico;
@@ -178,8 +183,19 @@ public class Interface extends javax.swing.JFrame {
         }
         if (!Arboles.isEmpty()){
             for (int x=0;x<Arboles.size();x++){
+                Hojas = new ArrayList<>();
+                Siguientes = new ArrayList<>();
+                Estados = new ArrayList<>();
+                Terminales = new ArrayList<>();
                 graficarArbol(Arboles.get(x),"Arbol"+String.valueOf(x+1)+"-"+NombresA.get(x));
+                generarTS(Arboles.get(x),"Siguientes"+String.valueOf(x+1)+"-"+NombresA.get(x));
+                generarTran("Trancisiones"+String.valueOf(x+1)+"-"+NombresA.get(x));
             }
+        }
+        try {
+            generarHTML();
+        } catch (IOException ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnAnalizarActionPerformed
 
@@ -228,9 +244,9 @@ public class Interface extends javax.swing.JFrame {
     
     public static void graficarArbol(nodo act, String nombre){
         FileWriter fichero = null;
-        PrintWriter pw = null;
+        PrintWriter pw;
         try {
-            fichero = new FileWriter("./src/Arboles/" + nombre + ".dot");
+            fichero = new FileWriter("./src/Arboles_201908335/" + nombre + ".dot");
             pw = new PrintWriter(fichero);
             pw.println("digraph G{");
             pw.println("rankdir=UD");
@@ -238,81 +254,192 @@ public class Interface extends javax.swing.JFrame {
             pw.println("concentrate=true");
             pw.println(act.getCodigoInterno());
             pw.println("}");
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("error, no se realizo el archivo");
         } finally {
             try {
                 if (null != fichero) {
                     fichero.close();
                 }
-            } catch (Exception e2) {
-                e2.printStackTrace();
+            } catch (IOException e2) {
             }
         }
         try {
             String[] cmd = new String[5];
             cmd[0] = "dot";
             cmd[1] = "-Tpng";
-            cmd[2] = "./src/Arboles/" +nombre + ".dot";
+            cmd[2] = "./src/Arboles_201908335/" +nombre + ".dot";
             cmd[3] = "-o";
-            cmd[4] = "./src/Arboles/" +nombre + ".png";
-
+            cmd[4] = "./src/Arboles_201908335/" +nombre + ".png";
             Runtime rt = Runtime.getRuntime();
-
             rt.exec(cmd);
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (IOException ex) {
         } finally {
         }
-
     }
     
-    /*public static void generarHTML() throws IOException{
+    public static void generarTS(nodo act,String nombre){
+        for (int x = 0;x < (Hojas.size()-1);x++){
+            Siguientes.add(".");
+        }        
         FileWriter fichero = null;
-                PrintWriter pw = null;
-                try {
-                    fichero = new FileWriter("./errores.html");
-                    pw = new PrintWriter(fichero);
-                    //comenzamos a escribir el html
-                    pw.println("<html>");
-                    pw.println("<head><title>REPORTE DE ERRORES</title></head>");
-                    pw.println("<body>");
-                    pw.println("<div align=\"center\">");
-                    pw.println("<h1>Reporte de Errores</h1>");
-                    pw.println("<br></br>");
-                    pw.println("<table border=1>");
-                    pw.println("<tr>");
-                    pw.println("<td bgcolor=green>TIPO</td>");
-                    pw.println("<td bgcolor=green>VALOR</td>");
-                    pw.println("<td bgcolor=green>FILA</td>");
-                    pw.println("<td bgcolor=green>COLUMNA</td>");
-                    pw.println("</tr>");
-                    for(int i=0;i<listaErrores.size();i++){
-                        pw.println("<tr>");
-                        pw.println("<td>"+listaErrores.get(i).getTipoError()+"</td>");
-                        pw.println("<td>"+listaErrores.get(i).getValorError()+"</td>");
-                        pw.println("<td>"+listaErrores.get(i).getFila()+"</td>");
-                        pw.println("<td>"+listaErrores.get(i).getColumna()+"</td>");
-                        pw.println("</tr>");
-                    }
-                    pw.println("</table>");
-                    pw.println("</div");
-                    pw.println("</body>");
-                    pw.println("</html>");
-                } catch (Exception e) {
-                }finally{
-                    if(null!=fichero){
-                            fichero.close();
-                    }
+        PrintWriter pw;
+        try {
+            fichero = new FileWriter("./src/Siguientes_201908335/" + nombre + ".dot");
+            pw = new PrintWriter(fichero);
+            pw.println("digraph G{");
+            pw.println(" graph [pad=\"0.5\", nodesep=\"0.5\", ranksep=\"2\"];");
+            pw.println("node [shape=plain]");
+            pw.println("Foo [label=<");
+            pw.println("<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">");
+            pw.println("<tr>");
+            pw.println("<td>HOJAS</td>");
+            pw.println("<td>SIGUIENTES</td>");
+            pw.println("</tr>");
+            act.getTablaSiguiente();
+            for(int i=0;i<Siguientes.size();i++){
+                pw.println("<tr>");
+                pw.println("<td>"+String.valueOf(i+1)+") "+Hojas.get(i)+"</td>");
+                pw.println("<td>"+Siguientes.get(i)+"</td>");
+                pw.println("</tr>");
+            }
+            pw.println("<tr>");
+                pw.println("<td>"+Hojas.get(Hojas.size()-1)+"</td>");
+                pw.println("<td>---</td>");
+                pw.println("</tr>");
+            pw.println("</table>>];");
+            pw.println("}");
+        } catch (IOException e) {
+            System.out.println("error, no se realizo el archivo");
+        } finally {
+            try {
+                if (null != fichero) {
+                    fichero.close();
                 }
-                try {
-            //Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + "Reportes\\"+"Reporte ErroresL.html");
-            //System.out.println("Final");
-        } catch (Exception e) {
-            e.printStackTrace();
+            } catch (IOException e2) {
+            }
         }
-    }*/
+        try {
+            String[] cmd = new String[5];
+            cmd[0] = "dot";
+            cmd[1] = "-Tpng";
+            cmd[2] = "./src/Siguientes_201908335/" +nombre + ".dot";
+            cmd[3] = "-o";
+            cmd[4] = "./src/Siguientes_201908335/" +nombre + ".png";
+            Runtime rt = Runtime.getRuntime();
+            rt.exec(cmd);
+        } catch (IOException ex) {
+        } finally {
+        }
+    }
+    
+    public static void generarTran(String nombre){
+        int estado = 0;
+        Estados.add("1");
+        for (int x=0;x<Siguientes.size();x++){
+            boolean bandera = false;
+            for (int y=0;y<Estados.size();y++){
+                if (!Siguientes.get(x).equals(Estados.get(y))){bandera = true;} else{bandera = false;}
+            }
+            if (bandera){Estados.add(Siguientes.get(x));}
+        }
+        Terminales.add(Hojas.get(0));
+        for (int x=0;x<Hojas.size();x++){
+            boolean bandera = false;
+            for (int y=0;y<Terminales.size();y++){
+                if (Hojas.get(x).equals("#")){bandera = false; break;}
+                else if (!Hojas.get(x).equals(Terminales.get(y))){bandera = true;} 
+                else{bandera = false; break;}
+            }
+            if (bandera){Terminales.add(Hojas.get(x));}
+        }
+        FileWriter fichero = null;
+        PrintWriter pw;
+        try {
+            fichero = new FileWriter("./src/Transiciones_201908335/" + nombre + ".dot");
+            pw = new PrintWriter(fichero);
+            pw.println("digraph G{");
+            pw.println(" graph [pad=\"0.5\", nodesep=\"0.5\", ranksep=\"2\"];");
+            pw.println("node [shape=plain]");
+            pw.println("Foo [label=<");
+            pw.println("<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">");
+            pw.println("<tr>");
+            pw.println("<td>ESTADO</td>");
+            for(int x=0;x<Terminales.size();x++){
+                pw.println("<td>"+Terminales.get(x)+"</td>");
+            }
+            pw.println("</tr>");
+            for(int i=0;i<Estados.size();i++){
+                pw.println("<tr>");
+                pw.println("<td>S"+String.valueOf(estado)+"{"+Estados.get(i)+"}</td>");
+                pw.println("</tr>");
+                estado++;
+            }
+            pw.println("</table>>];");
+            pw.println("}");
+        } catch (IOException e) {
+            System.out.println("error, no se realizo el archivo");
+        } finally {
+            try {
+                if (null != fichero) {
+                    fichero.close();
+                }
+            } catch (IOException e2) {
+            }
+        }
+        try {
+            String[] cmd = new String[5];
+            cmd[0] = "dot";
+            cmd[1] = "-Tpng";
+            cmd[2] = "./src/Transiciones_201908335/" +nombre + ".dot";
+            cmd[3] = "-o";
+            cmd[4] = "./src/Transiciones_201908335/" +nombre + ".png";
+            Runtime rt = Runtime.getRuntime();
+            rt.exec(cmd);
+        } catch (IOException ex) {
+        } finally {
+        }
+    }
+    
+    public static void generarHTML() throws IOException{
+        FileWriter fichero = null;
+        PrintWriter pw;
+        try {
+            fichero = new FileWriter("./src/Errores_201908335/errores.html");
+            pw = new PrintWriter(fichero);
+            //comenzamos a escribir el html
+            pw.println("<html>");
+            pw.println("<head><title>REPORTE DE ERRORES</title></head>");
+            pw.println("<body>");
+            pw.println("<div align=\"center\">");
+            pw.println("<h1>Reporte de Errores</h1>");
+            pw.println("<br></br>");
+            pw.println("<table border=1>");
+            pw.println("<tr>");
+            pw.println("<td bgcolor=green>TIPO</td>");
+            pw.println("<td bgcolor=green>VALOR</td>");
+            pw.println("<td bgcolor=green>FILA</td>");
+            pw.println("<td bgcolor=green>COLUMNA</td>");
+            pw.println("</tr>");
+            for(int i=0;i<Errores.size();i++){
+                pw.println("<tr>");
+                pw.println("<td>"+Errores.get(i).getTipoError()+"</td>");
+                pw.println("<td>"+Errores.get(i).getValorError()+"</td>");
+                pw.println("<td>"+Errores.get(i).getFila()+"</td>");
+                pw.println("<td>"+Errores.get(i).getColumna()+"</td>");
+                pw.println("</tr>");
+            }
+            pw.println("</table>");
+            pw.println("</div");
+            pw.println("</body>");
+            pw.println("</html>");
+        } catch (IOException e) {
+        }finally{
+            if(null!=fichero){
+                    fichero.close();
+            }
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAnalizar;

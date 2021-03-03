@@ -2,6 +2,7 @@
 
 package Analizadores;
 import java_cup.runtime.*;
+import proyecto1c1.*;
 
 
 /**
@@ -271,6 +272,13 @@ public class lexico implements java_cup.runtime.Scanner {
    * otherwise, it will have a value of 0.
    */
   private int zzFinalHighSurrogate = 0;
+
+  /* user code: */
+    public void addError(String tipo, String lexema, int fila, int columna)
+    {
+        error nuevoerror = new error(tipo, lexema, fila+1, columna+1);
+        Interface.Errores.add(nuevoerror);
+    }
 
 
   /**
@@ -658,6 +666,7 @@ public class lexico implements java_cup.runtime.Scanner {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
             { System.err.println("Error lexico: "+yytext()+ " Linea:"+(yyline)+" Columna:"+(yychar));
+            addError("Tipo Lexico", yytext(), yyline, yycolumn);
             } 
             // fall through
           case 45: break;

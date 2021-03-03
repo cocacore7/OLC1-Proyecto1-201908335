@@ -1,5 +1,6 @@
 package Analizadores;
 import java_cup.runtime.*;
+import proyecto1c1.*;
 
 %% 
 
@@ -28,6 +29,14 @@ LETRAEXPREG=\"[A-Z]|[a-z]|[0-9]\"
 CA=[0-9]"~"[0-9]
 CB=[a-z]"~"[a-z]
 CC=[A-Z]"~"[A-Z]
+
+%{
+    public void addError(String tipo, String lexema, int fila, int columna)
+    {
+        error nuevoerror = new error(tipo, lexema, fila+1, columna+1);
+        Interface.Errores.add(nuevoerror);
+    }
+%}
 
 %%
 
@@ -83,4 +92,5 @@ CC=[A-Z]"~"[A-Z]
 
 .   {
 	    System.err.println("Error lexico: "+yytext()+ " Linea:"+(yyline)+" Columna:"+(yychar));
+            addError("Tipo Lexico", yytext(), yyline, yycolumn);
     }

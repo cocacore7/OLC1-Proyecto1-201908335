@@ -5,15 +5,22 @@ import proyecto1c1.*;
 parser code
 {:
     public static nodo raiz;
+    public static nodo raiz2;
+    public static nodo numeral;
     public int contador=0;
+    public int hoja=1;
 
     public void syntax_error(Symbol s)
     {
         System.err.println("Error en la Linea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador "+s.value + " no reconocido. Se ha recuperado del error." );
+        error nuevoe = new error("Tipo Sintactico (Recuperado)", s.value.toString(), s.right+1, s.left+1);
+        Interface.Errores.add(nuevoe);
     }
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception
     {
         System.err.println("Error en la Linea " + (s.right+1)+ " Columna "+(s.left+1)+". Identificador " +s.value + " no reconocido.");
+        error nuevoe = new error("Tipo Sintactico", s.value.toString(), s.right+1, s.left+1);
+        Interface.Errores.add(nuevoe);
     }
 :}
 
@@ -51,18 +58,18 @@ CONJUNTO::=conj dospuntos identificador menos mayor CUERPOCONJUNTO puntocoma;
 
 VALIDARCADENA::=identificador dospuntos cadena puntocoma;
 
-REGULAR::=identificador:var2 menos mayor EXPRESIONES:var1 puntocoma {:parser.raiz = var1; Interface.Arboles.add(raiz); Interface.NombresA.add(var2);:};
+REGULAR::=identificador:var2 menos mayor EXPRESIONES:var1 puntocoma {:parser.raiz = var1; numeral = new nodo(null,null,"#",String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja),parser.contador); parser.contador++;if(raiz.anulable=="A"){raiz2 = new nodo(raiz,numeral,".","0","N",raiz.ant+","+numeral.ant,numeral.sig,parser.contador);}else{raiz2 = new nodo(raiz,numeral,".","0","N",raiz.ant,numeral.sig,parser.contador);}  parser.contador++; hoja = 1; contador = 0; Interface.Arboles.add(raiz2); Interface.NombresA.add(var2);:};
 
-EXPRESIONES::= punto EXPRESIONES:var1 EXPRESIONES:var2              {:RESULT=new nodo(var1, var2, ".", parser.contador); parser.contador++;:}
-              |barravertical EXPRESIONES:var1 EXPRESIONES:var2      {:RESULT=new nodo(var1, var2, "|", parser.contador); parser.contador++;:}
-              |suma EXPRESIONES:var1                                {:RESULT=new nodo(var1, null, "+", parser.contador); parser.contador++;:}
-              |asterisco EXPRESIONES:var1                           {:RESULT=new nodo(var1, null, "*", parser.contador); parser.contador++;:}
-              |interrogacion EXPRESIONES:var1                       {:RESULT=new nodo(var1, null, "?", parser.contador); parser.contador++;:}
-              |letraexp:var1                                        {:RESULT=new nodo(null, null, var1, parser.contador); parser.contador++;:}
-              |cadena:var1                                          {:RESULT=new nodo(null, null, var1, parser.contador); parser.contador++;:}
-              |entero:var1                                          {:RESULT=new nodo(null, null, var1, parser.contador); parser.contador++;:}
-              |especial:var1                                        {:RESULT=new nodo(null, null, var1, parser.contador); parser.contador++;:}
-              |llavesabre identificador:var1 llavescierra           {:RESULT=new nodo(null, null, var1, parser.contador); parser.contador++;:}
+EXPRESIONES::= punto EXPRESIONES:var1 EXPRESIONES:var2              {:if(var1.anulable=="A" && var2.anulable=="A"){RESULT=new nodo(var1, var2, ".","0","A",var1.ant+","+var2.ant,var1.sig+","+var2.sig, parser.contador);}else if(var1.anulable=="A" && var2.anulable=="N"){RESULT=new nodo(var1, var2, ".","0","N",var1.ant+","+var2.ant,var2.sig, parser.contador);}else if(var1.anulable=="N" && var2.anulable=="A"){RESULT=new nodo(var1, var2, ".","0","N",var1.ant,var1.sig+","+var2.sig, parser.contador);}else if(var1.anulable=="N" && var2.anulable=="N"){RESULT=new nodo(var1, var2, ".","0","N",var1.ant,var2.sig, parser.contador);} parser.contador++;:}
+              |barravertical EXPRESIONES:var1 EXPRESIONES:var2      {:if(var1.anulable=="A" || var2.anulable=="A"){RESULT=new nodo(var1, var2,"\\"+"|","0","A",var1.ant+","+var2.ant,var1.sig+","+var2.sig, parser.contador);}else{RESULT=new nodo(var1, var2,"\\"+"|","0","N",var1.ant+","+var2.ant,var1.sig+","+var2.sig,parser.contador);} parser.contador++;:}
+              |suma EXPRESIONES:var1                                {:if(var1.anulable=="N"){RESULT=new nodo(var1, null, "+","0","N",var1.ant,var1.sig, parser.contador);}else{RESULT=new nodo(var1, null, "+","0","A",var1.ant,var1.sig, parser.contador);} parser.contador++;:}
+              |asterisco EXPRESIONES:var1                           {:RESULT=new nodo(var1, null, "*","0","A",var1.ant,var1.sig, parser.contador); parser.contador++;:}
+              |interrogacion EXPRESIONES:var1                       {:RESULT=new nodo(var1, null, "?","0","A",var1.ant,var1.sig, parser.contador); parser.contador++;:}
+              |letraexp:var1                                        {:RESULT=new nodo(null, null, var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja), parser.contador); parser.contador++; parser.hoja++;:}
+              |cadena:var1                                          {:RESULT=new nodo(null, null, var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja), parser.contador); parser.contador++; parser.hoja++;:}
+              |entero:var1                                          {:RESULT=new nodo(null, null, var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja), parser.contador); parser.contador++; parser.hoja++;:}
+              |especial:var1                                        {:RESULT=new nodo(null, null,"\\"+var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja), parser.contador); parser.contador++; parser.hoja++;:}
+              |llavesabre identificador:var1 llavescierra           {:RESULT=new nodo(null, null, var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja), parser.contador); parser.contador++; parser.hoja++;:}
 ;
 
 CUERPOCONJUNTO::= LISTA
