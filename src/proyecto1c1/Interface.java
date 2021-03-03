@@ -17,6 +17,8 @@ public class Interface extends javax.swing.JFrame {
     public static ArrayList<String> Siguientes;
     public static ArrayList<String> Estados;
     public static ArrayList<String> Terminales;
+    public static ArrayList<String> EstadosL;
+    public static String Mueves[][];
     /**
      * Creates new form Interface
      */
@@ -187,9 +189,11 @@ public class Interface extends javax.swing.JFrame {
                 Siguientes = new ArrayList<>();
                 Estados = new ArrayList<>();
                 Terminales = new ArrayList<>();
+                EstadosL = new ArrayList<>();
                 graficarArbol(Arboles.get(x),"Arbol"+String.valueOf(x+1)+"-"+NombresA.get(x));
                 generarTS(Arboles.get(x),"Siguientes"+String.valueOf(x+1)+"-"+NombresA.get(x));
                 generarTran("Trancisiones"+String.valueOf(x+1)+"-"+NombresA.get(x));
+                generarAFD("AFD"+String.valueOf(x+1)+"-"+NombresA.get(x));
             }
         }
         try {
@@ -334,14 +338,15 @@ public class Interface extends javax.swing.JFrame {
     }
     
     public static void generarTran(String nombre){
-        int estado = 0;
+        int estado = 1;
         Estados.add("1");
+        EstadosL.add("S0");
         for (int x=0;x<Siguientes.size();x++){
             boolean bandera = false;
             for (int y=0;y<Estados.size();y++){
                 if (!Siguientes.get(x).equals(Estados.get(y))){bandera = true;} else{bandera = false;}
             }
-            if (bandera){Estados.add(Siguientes.get(x));}
+            if (bandera){Estados.add(Siguientes.get(x)); EstadosL.add("S"+String.valueOf(estado)); estado++;}
         }
         Terminales.add(Hojas.get(0));
         for (int x=0;x<Hojas.size();x++){
@@ -369,11 +374,35 @@ public class Interface extends javax.swing.JFrame {
                 pw.println("<td>"+Terminales.get(x)+"</td>");
             }
             pw.println("</tr>");
-            for(int i=0;i<Estados.size();i++){
+            Mueves = new String[Estados.size()][Terminales.size()];
+            for(int i=0;i<(Estados.size());i++){
+                for(int j=0;j<Terminales.size();j++){
+                    Mueves[i][j] = "---";
+                }
+            }
+            Mueves[0][0] = "S1";
+            for(int i=1;i<Estados.size();i++){
+                String[] trans = Estados.get(i).split(",");
+                for (String valor: trans){
+                    if (Hojas.size()!=Integer.valueOf(valor)){
+                        int pos = posicion(valor);
+                        for(int j=0;j<Terminales.size();j++){
+                            if (Hojas.get(Integer.valueOf(valor)-1).equals(Terminales.get(j))){
+                                Mueves[i][j] = EstadosL.get(pos);
+                                break;
+                            }
+                        }
+                        
+                    }
+                }
+            }
+            for(int i=0;i<(Mueves.length);i++){
                 pw.println("<tr>");
-                pw.println("<td>S"+String.valueOf(estado)+"{"+Estados.get(i)+"}</td>");
+                pw.println("<td>"+EstadosL.get(i)+"{"+Estados.get(i)+"}</td>");
+                for (int j = 0; j < Mueves[i].length;j++){
+                    pw.println("<td>"+Mueves[i][j]+"</td>");
+                }
                 pw.println("</tr>");
-                estado++;
             }
             pw.println("</table>>];");
             pw.println("}");
@@ -399,6 +428,78 @@ public class Interface extends javax.swing.JFrame {
         } catch (IOException ex) {
         } finally {
         }
+    }
+    
+    public static int posicion(String s){
+        int pos = 0;
+        for(int x = 0;x<Estados.size();x++){
+            if (Estados.get(x).equals(Siguientes.get(Integer.valueOf(s)-1))){pos = x; break;}
+        }
+        return pos;
+    }
+    
+    public static void generarAFD(String nombre){
+    FileWriter fichero = null;
+        PrintWriter pw;
+        try {
+            fichero = new FileWriter("./src/AFD_201908335/" + nombre + ".dot");
+            pw = new PrintWriter(fichero);
+            pw.println("digraph G{");
+            pw.println("rankdir=LR;");
+            String aceptacion = EstadosL.get(EstadosL.size()-1);
+            pw.println("node [shape = doublecircle];"+ aceptacion+";");
+            pw.println("node [shape = circle];");
+            for (int x=0;x<(EstadosL.size()-1);x++){
+                pw.println("nodo"+String.valueOf(x)+"[label=\""+EstadosL.get(x)+"\"];");
+            }
+            for (int x=0;x<Mueves.length;x++){
+                for (int y=0;y<Mueves[x].length;y++){
+                    if (!Mueves[x][y].equals("---")){
+                        if (Mueves[x][y].equals(aceptacion)){
+                            if(x==(EstadosL.size()-1)){
+                                pw.println(aceptacion+"->"+aceptacion+"[ label = \""+Terminales.get(y)+"\"];");
+                            }else{
+                                pw.println("nodo"+String.valueOf(x)+"->"+aceptacion+"[ label = \""+Terminales.get(y)+"\"];");
+                            }
+                            
+                        }else{
+                            int pos = obtenerNodo(Mueves[x][y]);
+                            pw.println("nodo"+String.valueOf(x)+"->nodo"+String.valueOf(pos)+"[ label = \""+Terminales.get(y)+"\"];");
+                        }
+                    }
+                }
+            }
+            pw.println("}");
+        } catch (IOException e) {
+            System.out.println("error, no se realizo el archivo");
+        } finally {
+            try {
+                if (null != fichero) {
+                    fichero.close();
+                }
+            } catch (IOException e2) {
+            }
+        }
+        try {
+            String[] cmd = new String[5];
+            cmd[0] = "dot";
+            cmd[1] = "-Tpng";
+            cmd[2] = "./src/AFD_201908335/" +nombre + ".dot";
+            cmd[3] = "-o";
+            cmd[4] = "./src/AFD_201908335/" +nombre + ".png";
+            Runtime rt = Runtime.getRuntime();
+            rt.exec(cmd);
+        } catch (IOException ex) {
+        } finally {
+        }
+    }
+    
+    public static int obtenerNodo(String s){
+        int pos = 0;
+        for (int x = 0;x<EstadosL.size();x++){
+            if(EstadosL.get(x).equals(s)){pos = x; break;}
+        }
+        return pos;
     }
     
     public static void generarHTML() throws IOException{
