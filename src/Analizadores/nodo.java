@@ -82,4 +82,87 @@ public class nodo {
         Interface.Siguientes.set(pos-1, regreso);
     }
     
+    public void getAFND(){
+        if(hder!=null){
+            if (valor.equals("*")){
+                Interface.cant = Interface.cant + 2;
+            } else if (valor.equals("+")){
+                Interface.cant = Interface.cant + 2;
+            } else if (valor.equals("?")){
+                Interface.cant = Interface.cant + 2;
+            }else if (valor.equals("\\|")){
+                Interface.cant = Interface.cant + 3;
+            }
+            hder.getAFND();
+        }
+        if(hizq !=null){
+            if (valor.equals("*")){
+                Interface.cant = Interface.cant + 2;
+            } else if (valor.equals("+")){
+                Interface.cant = Interface.cant + 2;
+            } else if (valor.equals("?")){
+                Interface.cant = Interface.cant + 2;
+            }else if (valor.equals("\\|")){
+                Interface.cant = Interface.cant + 3;
+            }
+            hizq.getAFND();
+            if (valor.equals("*")){
+                Interface.inicio = Interface.inicio-1;
+                Interface.fin = Interface.fin + 1;
+                Interface.mov+="nodo"+String.valueOf(Interface.inicio)+"->nodo"+String.valueOf(Interface.inicio+1)+"[ label = ε];\n";
+                Interface.mov+="nodo"+String.valueOf(Interface.fin)+"->nodo"+String.valueOf(Interface.fin-1)+"[ label = ε];\n";
+                Interface.mov+="nodo"+String.valueOf(Interface.inicio)+"->nodo"+String.valueOf(Interface.fin)+"[ label = ε];\n";
+                Interface.mov+="nodo"+String.valueOf(Interface.fin-1)+"->nodo"+String.valueOf(Interface.inicio+1)+"[ label = ε];\n";
+            } else if (valor.equals("+")){
+                Interface.inicio = Interface.inicio-1;
+                Interface.fin = Interface.fin + 1;
+                Interface.mov+="nodo"+String.valueOf(Interface.inicio)+"->nodo"+String.valueOf(Interface.inicio+1)+"[ label = ε];\n";
+                Interface.mov+="nodo"+String.valueOf(Interface.fin)+"->nodo"+String.valueOf(Interface.fin-1)+"[ label = ε];\n";
+                Interface.mov+="nodo"+String.valueOf(Interface.fin-1)+"->nodo"+String.valueOf(Interface.inicio+1)+"[ label = ε];\n";
+            } else if (valor.equals("?")){
+                Interface.inicio = Interface.inicio-1;
+                Interface.fin = Interface.fin + 1;
+                Interface.mov+="nodo"+String.valueOf(Interface.inicio)+"->nodo"+String.valueOf(Interface.inicio+1)+"[ label = ε];\n";
+                Interface.mov+="nodo"+String.valueOf(Interface.fin)+"->nodo"+String.valueOf(Interface.fin-1)+"[ label = ε];\n";
+                Interface.mov+="nodo"+String.valueOf(Interface.inicio)+"->nodo"+String.valueOf(Interface.fin)+"[ label = ε];\n";
+            }else if (valor.equals("\\|")){
+                Interface.inicio = Interface.inicio-1;
+                Interface.fin = Interface.fin + 3;
+                Interface.mov+="nodo"+String.valueOf(Interface.inicio)+"->nodo"+String.valueOf(Interface.inicio+1)+"[ label = ε];\n";
+                Interface.mov+="nodo"+String.valueOf(Interface.inicio)+"->nodo"+String.valueOf(Interface.fin-2)+"[ label = ε];\n";
+                Interface.mov+="nodo"+String.valueOf(Interface.fin-3)+"->nodo"+String.valueOf(Interface.fin)+"[ label = ε];\n";
+                Interface.mov+="nodo"+String.valueOf(Interface.fin-1)+"->nodo"+String.valueOf(Interface.fin)+"[ label = ε];\n";
+            }
+        }
+        if(hizq==null && hder==null){
+            Interface.inicio = Interface.cant;
+            Interface.fin = Interface.cant + 1;
+            Interface.mov+="nodo"+String.valueOf(Interface.inicio)+"->nodo"+String.valueOf(Interface.fin)+"[ label = \""+valor+"\"];\n";
+            Interface.cant++;
+        }
+    }
+    
+    
+    public void getCantAFND(){
+        if(hder!=null){
+            hder.getCantAFND();
+        }
+        if(hizq !=null){
+            hizq.getCantAFND();
+            if (valor.equals("*")){
+                Interface.cant = Interface.cant + 2;
+            } else if (valor.equals("+")){
+                Interface.cant = Interface.cant + 2;
+            } else if (valor.equals("?")){
+                Interface.cant = Interface.cant + 2;
+            }else if (valor.equals("\\|")){
+                Interface.cant = Interface.cant + 3;
+            }
+        }
+        if(hizq==null && hder==null){
+            Interface.cant++;
+        }
+    }
+    
+    
 }

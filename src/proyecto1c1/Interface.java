@@ -1,6 +1,11 @@
 package proyecto1c1;
 
 import Analizadores.*;
+import java.awt.FileDialog;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,6 +13,8 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 public class Interface extends javax.swing.JFrame {
     public static ArrayList<nodo> Arboles;
@@ -19,6 +26,14 @@ public class Interface extends javax.swing.JFrame {
     public static ArrayList<String> Terminales;
     public static ArrayList<String> EstadosL;
     public static String Mueves[][];
+    public static int cant;
+    public static int inicio;
+    public static int fin;
+    public static String mov;
+    public static boolean bandera;
+    
+    public static String ruta = "./src/ArchivoNuevo.olc";
+    public FileDialog fdGuardar;
     /**
      * Creates new form Interface
      */
@@ -40,7 +55,7 @@ public class Interface extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         btnGAutomatas = new javax.swing.JButton();
         btnAnalizar = new javax.swing.JButton();
-        btnArchivo = new javax.swing.JButton();
+        btnNuevo = new javax.swing.JButton();
         cbTipo = new javax.swing.JComboBox<>();
         panImagen = new javax.swing.JPanel();
         btnAnterior = new javax.swing.JButton();
@@ -49,6 +64,9 @@ public class Interface extends javax.swing.JFrame {
         txtEntrada = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
         txtSalida = new javax.swing.JTextArea();
+        btnGuardar = new javax.swing.JButton();
+        btnGuardarC = new javax.swing.JButton();
+        btnAbrir = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -58,19 +76,23 @@ public class Interface extends javax.swing.JFrame {
         jLabel2.setText("Salida");
 
         btnGAutomatas.setText("Generar Automatas");
+        btnGAutomatas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGAutomatasActionPerformed(evt);
+            }
+        });
 
         btnAnalizar.setText("Analizar Entrada");
-        btnAnalizar.setActionCommand("Analizar Entrada");
         btnAnalizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAnalizarActionPerformed(evt);
             }
         });
 
-        btnArchivo.setText("Archivo");
-        btnArchivo.addActionListener(new java.awt.event.ActionListener() {
+        btnNuevo.setText("Nuevo Archivo");
+        btnNuevo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnArchivoActionPerformed(evt);
+                btnNuevoActionPerformed(evt);
             }
         });
 
@@ -104,6 +126,26 @@ public class Interface extends javax.swing.JFrame {
         txtSalida.setRows(5);
         jScrollPane2.setViewportView(txtSalida);
 
+        btnGuardar.setText("Guardar");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
+
+        btnGuardarC.setText("Guardar Como");
+        btnGuardarC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarCActionPerformed(evt);
+            }
+        });
+
+        btnAbrir.setText("Abrir Archivo");
+        btnAbrir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAbrirActionPerformed(evt);
+            }
+        });
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -121,9 +163,16 @@ public class Interface extends javax.swing.JFrame {
                                 .addComponent(btnGAutomatas)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(btnAnalizar))
-                            .addComponent(btnArchivo)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnNuevo)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnAbrir))
                             .addComponent(jLabel1)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnGuardar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnGuardarC)))
                         .addGap(18, 18, 18)
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -144,11 +193,17 @@ public class Interface extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnArchivo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnNuevo)
+                            .addComponent(btnAbrir))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnGuardar)
+                            .addComponent(btnGuardarC))
+                        .addGap(18, 18, 18)
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jScrollPane1)
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnGAutomatas)
@@ -172,13 +227,110 @@ public class Interface extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarActionPerformed
+        
+    }//GEN-LAST:event_btnAnalizarActionPerformed
+
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
+        fdGuardar=new FileDialog(fdGuardar, "Guardar como", FileDialog.SAVE);
+        fdGuardar.setVisible(true);
+        fdGuardar.dispose();
+        ruta = fdGuardar.getDirectory()+fdGuardar.getFile()+".olc";
+        File archivo = new File(ruta);
+        if(!archivo.exists()){
+            try {
+                archivo.createNewFile();
+            } catch (IOException ex) {
+                Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        txtEntrada.setText("");
+    }//GEN-LAST:event_btnNuevoActionPerformed
+
+    private void btnAnteriorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnteriorActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAnteriorActionPerformed
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        File archivo = new File(ruta);
+        if(!archivo.exists()){try {
+            archivo.createNewFile();
+            } catch (IOException ex) {
+                Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        try {
+            FileWriter escribir = new FileWriter(archivo);
+            try (BufferedWriter escribirb = new BufferedWriter(escribir)) {
+                escribirb.write(txtEntrada.getText());
+                escribirb.close();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnGuardarCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarCActionPerformed
+        fdGuardar=new FileDialog(fdGuardar, "Guardar como", FileDialog.SAVE);
+        fdGuardar.setVisible(true);
+        fdGuardar.dispose();
+        ruta = fdGuardar.getDirectory()+fdGuardar.getFile()+".olc";
+        File archivo = new File(ruta);
+        if(!archivo.exists()){
+            try {
+                archivo.createNewFile();
+            } catch (IOException ex) {
+                Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        try {
+            FileWriter escribir = new FileWriter(archivo);
+            try (BufferedWriter escribirb = new BufferedWriter(escribir)) {
+                escribirb.write(txtEntrada.getText());
+                escribirb.close();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnGuardarCActionPerformed
+
+    private void btnAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirActionPerformed
+        txtEntrada.setText("");
+        JFileChooser selec = new JFileChooser();
+        if(selec.showDialog(null,"Abrir")==JFileChooser.APPROVE_OPTION){
+            File archivo = selec.getSelectedFile();
+            if(archivo.canRead()){
+                if(archivo.getName().endsWith("olc")){
+                    try {
+                        String doc = "";
+                        String linea;
+                        ruta = archivo.getAbsolutePath();
+                        FileReader fr = new FileReader(ruta);
+                        BufferedReader read = new BufferedReader(fr);
+                        while((linea = read.readLine()) != null){
+                            doc += linea + "\n";
+                        }
+                        txtEntrada.setText(doc);
+                    } catch (IOException ex) {
+                        Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(null, "Archivo No Compatible");
+                }
+            }
+        }
+        
+        
+        
+    }//GEN-LAST:event_btnAbrirActionPerformed
+
+    private void btnGAutomatasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGAutomatasActionPerformed
         Arboles = new ArrayList<>();
         NombresA = new ArrayList<>();
         Errores = new ArrayList<>();
-        String entrada = txtEntrada.getText();
+        String entra = txtEntrada.getText();
         try {
             parser sintactico;
-            sintactico = new parser(new lexico(new StringReader(entrada)));
+            sintactico = new parser(new lexico(new StringReader(entra)));
             sintactico.parse();
         } catch (Exception ex) {
             Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
@@ -190,10 +342,14 @@ public class Interface extends javax.swing.JFrame {
                 Estados = new ArrayList<>();
                 Terminales = new ArrayList<>();
                 EstadosL = new ArrayList<>();
+                cant = 0;
+                mov = "";
                 graficarArbol(Arboles.get(x),"Arbol"+String.valueOf(x+1)+"-"+NombresA.get(x));
+                graficarAFND(Arboles.get(x),"AFND"+String.valueOf(x+1)+"-"+NombresA.get(x));
                 generarTS(Arboles.get(x),"Siguientes"+String.valueOf(x+1)+"-"+NombresA.get(x));
                 generarTran("Trancisiones"+String.valueOf(x+1)+"-"+NombresA.get(x));
                 generarAFD("AFD"+String.valueOf(x+1)+"-"+NombresA.get(x));
+                txtSalida.setText("Graficos " + NombresA.get(x) + "Creados :D" );
             }
         }
         try {
@@ -201,16 +357,8 @@ public class Interface extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_btnAnalizarActionPerformed
-
-    private void btnArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnArchivoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnArchivoActionPerformed
-
-    private void btnAnteriorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnteriorActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnAnteriorActionPerformed
-
+    }//GEN-LAST:event_btnGAutomatasActionPerformed
+    
     /**
      * @param args the command line arguments
      */
@@ -275,6 +423,52 @@ public class Interface extends javax.swing.JFrame {
             cmd[2] = "./src/Arboles_201908335/" +nombre + ".dot";
             cmd[3] = "-o";
             cmd[4] = "./src/Arboles_201908335/" +nombre + ".png";
+            Runtime rt = Runtime.getRuntime();
+            rt.exec(cmd);
+        } catch (IOException ex) {
+        } finally {
+        }
+    }
+    
+    public static void graficarAFND(nodo act, String nombre){
+        FileWriter fichero = null;
+        PrintWriter pw;
+        try {
+            fichero = new FileWriter("./src/AFND_201908335/" + nombre + ".dot");
+            pw = new PrintWriter(fichero);
+            pw.println("digraph G{");
+            pw.println("rankdir=LR;");
+            bandera = true;
+            act.hizq.getCantAFND();
+            pw.println("node [shape = doublecircle];"+ String.valueOf(cant)+";");
+            pw.println("node [shape = circle];");
+            for (int x=0;x<(cant-1);x++){
+                pw.println("nodo"+String.valueOf(x)+"[label=\""+String.valueOf(x)+"\"];");
+            }
+            cant = 1;
+            inicio = 0;
+            fin = 0;
+            bandera = true;
+            act.hizq.getAFND();
+            pw.println(mov);
+            pw.println("}");
+        } catch (IOException e) {
+            System.out.println("error, no se realizo el archivo");
+        } finally {
+            try {
+                if (null != fichero) {
+                    fichero.close();
+                }
+            } catch (IOException e2) {
+            }
+        }
+        try {
+            String[] cmd = new String[5];
+            cmd[0] = "dot";
+            cmd[1] = "-Tpng";
+            cmd[2] = "./src/AFND_201908335/" +nombre + ".dot";
+            cmd[3] = "-o";
+            cmd[4] = "./src/AFND_201908335/" +nombre + ".png";
             Runtime rt = Runtime.getRuntime();
             rt.exec(cmd);
         } catch (IOException ex) {
@@ -543,10 +737,13 @@ public class Interface extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAbrir;
     private javax.swing.JButton btnAnalizar;
     private javax.swing.JButton btnAnterior;
-    private javax.swing.JButton btnArchivo;
     private javax.swing.JButton btnGAutomatas;
+    private javax.swing.JButton btnGuardar;
+    private javax.swing.JButton btnGuardarC;
+    private javax.swing.JButton btnNuevo;
     private javax.swing.JButton btnSig;
     private javax.swing.JComboBox<String> cbTipo;
     private javax.swing.JLabel jLabel1;
