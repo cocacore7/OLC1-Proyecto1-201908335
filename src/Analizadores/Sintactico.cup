@@ -32,13 +32,13 @@ terminal String llavesabre, barravertical, llavescierra, pestan;
 terminal String identificador, letra, entero, casa, casb, casc;
 
 non terminal INICIO;
-non terminal String CONJUNTO;
+non terminal conjunto CONJUNTO;
 non terminal String CUERPOCONJUNTO;
 non terminal String LISTA;
 non terminal String CUERPO1;
 non terminal String CUERPO2;
 non terminal nodo REGULAR;
-non terminal String VALIDARCADENA;
+non terminal Entradas VALIDARCADENA;
 non terminal nodo EXPRESIONES;
 non terminal String VALOR;
 
@@ -54,9 +54,9 @@ CUERPO1::=CUERPO1 CONJUNTO
 CUERPO2::=CUERPO2 VALIDARCADENA
          |VALIDARCADENA;
 
-CONJUNTO::=conj dospuntos identificador menos mayor CUERPOCONJUNTO puntocoma;
+CONJUNTO::=conj dospuntos identificador:var1 menos mayor CUERPOCONJUNTO:var2 puntocoma {:RESULT=new conjunto(var1,var2,null); Interface.Conjuntos.add(RESULT);:};
 
-VALIDARCADENA::=identificador dospuntos cadena puntocoma;
+VALIDARCADENA::=identificador:var1 dospuntos cadena:var2 puntocoma {:RESULT=new Entradas(var1,var2); Interface.Entradas.add(RESULT);:};
 
 REGULAR::=identificador:var2 menos mayor EXPRESIONES:var1 puntocoma {:parser.raiz = var1; numeral = new nodo(null,null,"#",String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja),parser.contador); parser.contador++;if(raiz.anulable=="A"){raiz2 = new nodo(raiz,numeral,".","0","N",raiz.ant+","+numeral.ant,numeral.sig,parser.contador);}else{raiz2 = new nodo(raiz,numeral,".","0","N",raiz.ant,numeral.sig,parser.contador);}  parser.contador++; hoja = 1; contador = 0; Interface.Arboles.add(raiz2); Interface.NombresA.add(var2);:};
 
@@ -72,49 +72,50 @@ EXPRESIONES::= punto EXPRESIONES:var1 EXPRESIONES:var2              {:if(var1.an
               |llavesabre identificador:var1 llavescierra           {:RESULT=new nodo(null, null, var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja), parser.contador); parser.contador++; parser.hoja++;:}
 ;
 
-CUERPOCONJUNTO::= LISTA
-                 |casa
-                 |casb
-                 |casc
-                 |VALOR pestan VALOR;
+CUERPOCONJUNTO::= LISTA:var1                    {:RESULT=var1;:}
+                 |casa:var1                     {:RESULT=var1;:}
+                 |casb:var1                     {:RESULT=var1;:}
+                 |casc:var1                     {:RESULT=var1;:}
+                 |VALOR:var1 pestan:var3 VALOR:var2  {:RESULT=var1+var3+var2;:}
+;
 
-LISTA  ::= LISTA coma letra
-          |LISTA coma entero
-          |LISTA coma especial
-          |letra
-          |entero
-          |especial;
+LISTA  ::= LISTA:var1 coma:var3 letra:var2           {:RESULT=var1 + var3 + var2;:}
+          |LISTA:var1 coma:var3 entero:var2          {:RESULT=var1 + var3 + var2;:}
+          |LISTA:var1 coma:var3 especial:var2        {:RESULT=var1 + var3 + var2;:}
+          |letra:var1                           {:RESULT=var1;:}
+          |entero:var1                          {:RESULT=var1;:}
+          |especial:var1                        {:RESULT=var1;:};
 
-VALOR::=coma
-       |letra
-       |entero
-       |comilladoble
-       |admiracion
-       |numeral
-       |dolar
-       |porcentaje
-       |ampersand
-       |comillasimple
-       |parentesisabre
-       |parentesiscierra
-       |asterisco
-       |suma
-       |menos
-       |punto
-       |barrainclinada
-       |dospuntos
-       |puntocoma
-       |menor
-       |igual
-       |mayor
-       |interrogacion
-       |arroba
-       |corchetesabre
-       |corchetescierra
-       |elevado
-       |guionbajo
-       |acentograve
-       |llavesabre
-       |barravertical
-       |especial
-       |llavescierra;
+VALOR::=coma:var1                       {:RESULT=var1;:}
+       |letra:var1                      {:RESULT=var1;:}
+       |entero:var1                     {:RESULT=var1;:}
+       |comilladoble:var1               {:RESULT=var1;:}
+       |admiracion:var1                 {:RESULT=var1;:}
+       |numeral:var1                    {:RESULT=var1;:}
+       |dolar:var1                      {:RESULT=var1;:}
+       |porcentaje:var1                 {:RESULT=var1;:}
+       |ampersand:var1                  {:RESULT=var1;:}
+       |comillasimple:var1              {:RESULT=var1;:}
+       |parentesisabre:var1             {:RESULT=var1;:}
+       |parentesiscierra:var1           {:RESULT=var1;:}
+       |asterisco:var1                  {:RESULT=var1;:}
+       |suma:var1                       {:RESULT=var1;:}
+       |menos:var1                      {:RESULT=var1;:}
+       |punto:var1                      {:RESULT=var1;:}
+       |barrainclinada:var1             {:RESULT=var1;:}
+       |dospuntos:var1                  {:RESULT=var1;:}
+       |puntocoma:var1                  {:RESULT=var1;:}
+       |menor:var1                      {:RESULT=var1;:}
+       |igual:var1                      {:RESULT=var1;:}
+       |mayor:var1                      {:RESULT=var1;:}
+       |interrogacion:var1              {:RESULT=var1;:}
+       |arroba:var1                     {:RESULT=var1;:}
+       |corchetesabre:var1              {:RESULT=var1;:}
+       |corchetescierra:var1            {:RESULT=var1;:}
+       |elevado:var1                    {:RESULT=var1;:}
+       |guionbajo:var1                  {:RESULT=var1;:}
+       |acentograve:var1                {:RESULT=var1;:}
+       |llavesabre:var1                 {:RESULT=var1;:}
+       |barravertical:var1              {:RESULT=var1;:}
+       |especial:var1                   {:RESULT=var1;:}
+       |llavescierra:var1               {:RESULT=var1;:};

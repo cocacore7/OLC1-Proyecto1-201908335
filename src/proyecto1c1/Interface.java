@@ -10,7 +10,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -18,19 +20,21 @@ import javax.swing.JOptionPane;
 
 public class Interface extends javax.swing.JFrame {
     public static ArrayList<nodo> Arboles;
-    public static ArrayList<String> NombresA;
+    public static ArrayList<conjunto> Conjuntos;
+    public static ArrayList<Entradas> Entradas;
+    public static ArrayList<AFD> AFDS;
     public static ArrayList<error> Errores;
+    public static ArrayList<String> NombresA;
     public static ArrayList<String> Hojas;
     public static ArrayList<String> Siguientes;
     public static ArrayList<String> Estados;
     public static ArrayList<String> Terminales;
     public static ArrayList<String> EstadosL;
+    public static ArrayList<String> Inicios;
     public static String Mueves[][];
     public static int cant;
-    public static int inicio;
-    public static int fin;
+    public static int arch = 0;
     public static String mov;
-    public static boolean bandera;
     
     public static String ruta = "./src/ArchivoNuevo.olc";
     public FileDialog fdGuardar;
@@ -50,16 +54,11 @@ public class Interface extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTextField1 = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         btnGAutomatas = new javax.swing.JButton();
         btnAnalizar = new javax.swing.JButton();
         btnNuevo = new javax.swing.JButton();
-        cbTipo = new javax.swing.JComboBox<>();
-        panImagen = new javax.swing.JPanel();
-        btnAnterior = new javax.swing.JButton();
-        btnSig = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtEntrada = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -95,28 +94,6 @@ public class Interface extends javax.swing.JFrame {
                 btnNuevoActionPerformed(evt);
             }
         });
-
-        cbTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        javax.swing.GroupLayout panImagenLayout = new javax.swing.GroupLayout(panImagen);
-        panImagen.setLayout(panImagenLayout);
-        panImagenLayout.setHorizontalGroup(
-            panImagenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        panImagenLayout.setVerticalGroup(
-            panImagenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 362, Short.MAX_VALUE)
-        );
-
-        btnAnterior.setText("Anterior");
-        btnAnterior.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAnteriorActionPerformed(evt);
-            }
-        });
-
-        btnSig.setText("Siguiente");
 
         txtEntrada.setColumns(20);
         txtEntrada.setRows(5);
@@ -155,69 +132,43 @@ public class Interface extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2)
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnGAutomatas)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnAnalizar))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnNuevo)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnAbrir))
-                            .addComponent(jLabel1)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnGuardar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnGuardarC)))
-                        .addGap(18, 18, 18)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(panImagen, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(cbTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnAnterior)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 232, Short.MAX_VALUE)
-                                .addComponent(btnSig)))))
+                            .addComponent(jLabel2)
+                            .addComponent(btnGAutomatas)
+                            .addComponent(btnNuevo)
+                            .addComponent(jLabel1)
+                            .addComponent(btnGuardar))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 478, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnAnalizar, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnAbrir, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnGuardarC, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addComponent(jScrollPane2))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnNuevo)
-                            .addComponent(btnAbrir))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnGuardar)
-                            .addComponent(btnGuardarC))
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnGAutomatas)
-                            .addComponent(btnAnalizar)
-                            .addComponent(btnAnterior)
-                            .addComponent(btnSig))
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel2))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(cbTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(70, 70, 70)
-                        .addComponent(panImagen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 71, Short.MAX_VALUE))
-                    .addComponent(jTextField1))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnNuevo)
+                    .addComponent(btnAbrir))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnGuardar)
+                    .addComponent(btnGuardarC))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnGAutomatas)
+                    .addComponent(btnAnalizar))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -227,9 +178,134 @@ public class Interface extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarActionPerformed
-        
+        if(!Entradas.isEmpty()){
+            conjunto conj = null;
+            for (int x = 0;x<AFDS.size();x++){
+                for (int y=0;y<AFDS.get(x).Terminales.size();y++){
+                    for(int z= 0;z<Conjuntos.size();z++){
+                        if(Conjuntos.get(z).nombre.equals(AFDS.get(x).Terminales.get(y))){
+                            conj = null;
+                            break;
+                        }else{
+                            ArrayList<String> aux = new ArrayList<>();
+                            aux.add(AFDS.get(x).Terminales.get(y));
+                            conj = new conjunto(AFDS.get(x).Terminales.get(y),"",aux);
+                        }
+                    }
+                    if(conj!=null){Conjuntos.add(conj);}
+                }
+            }
+            FileWriter fichero = null;
+            PrintWriter pw;
+            try {
+                arch++;
+                fichero = new FileWriter("./src/Salidas_201908335/Archivo" + String.valueOf(arch) + ".json");
+                pw = new PrintWriter(fichero);
+                pw.println("[");
+                for (int x = 0; x<Entradas.size();x++){
+                    Entradas a = Entradas.get(x);
+                    int exp = obtenerPosIDen(a.expresion);
+                    AFD afd = AFDS.get(exp);
+                    if(validarLetra(afd,a)){
+                        txtSalida.setText(txtSalida.getText()+"\n"+Entradas.get(x).expresion+" - "+'"'+Entradas.get(x).valor+'"' +" Aceptada");
+                        if (x != (Entradas.size()-1)){
+                            pw.println("    {");
+                            pw.println("        "+'"'+"Valor"+'"'+":"+'"'+Entradas.get(x).valor+'"'+",");
+                            pw.println("        "+'"'+"ExpresionRegular"+'"'+":"+'"'+Entradas.get(x).expresion+'"'+",");
+                            pw.println("        "+'"'+"Resultado"+'"'+":"+'"'+"Cadena Valida"+'"'+"");
+                            pw.println("    },");
+                        }else{
+                            pw.println("    {");
+                            pw.println("        "+'"'+"Valor"+'"'+":"+'"'+Entradas.get(x).valor+'"'+",");
+                            pw.println("        "+'"'+"ExpresionRegular"+'"'+":"+'"'+Entradas.get(x).expresion+'"'+",");
+                            pw.println("        "+'"'+"Resultado"+'"'+":"+'"'+"Cadena Valida"+'"'+"");
+                            pw.println("    }");
+                        }
+                    }else{
+                        txtSalida.setText(txtSalida.getText()+"\n"+Entradas.get(x).expresion+" - "+'"'+Entradas.get(x).valor+'"' +" Incorrecta");
+                        if (x != (Entradas.size()-1)){
+                            pw.println("    {");
+                            pw.println("        "+'"'+"Valor"+'"'+":"+'"'+Entradas.get(x).valor+'"'+",");
+                            pw.println("        "+'"'+"ExpresionRegular"+'"'+":"+'"'+Entradas.get(x).expresion+'"'+",");
+                            pw.println("        "+'"'+"Resultado"+'"'+":"+'"'+"Cadena Incorrecta"+'"'+"");
+                            pw.println("    },");
+                        }else{
+                            pw.println("    {");
+                            pw.println("        "+'"'+"Valor"+'"'+":"+'"'+Entradas.get(x).valor+'"'+",");
+                            pw.println("        "+'"'+"ExpresionRegular"+'"'+":"+'"'+Entradas.get(x).expresion+'"'+",");
+                            pw.println("        "+'"'+"Resultado"+'"'+":"+'"'+"Cadena Incorrecta"+'"'+"");
+                            pw.println("    }");
+                        }
+                    }
+                }
+                
+                pw.println("]");
+            } catch (IOException e) {
+                System.out.println("error, no se realizo el archivo");
+            } finally {
+                try {
+                    if (null != fichero) {
+                        fichero.close();
+                    }
+                } catch (IOException e2) {}
+            }
+        }
     }//GEN-LAST:event_btnAnalizarActionPerformed
 
+    public boolean validarLetra(AFD afd, Entradas a){
+        int estado = 0;
+        boolean bandera = false;
+        String EstadoA;
+        String[] datos = a.valor.split("");
+        for (String letra: datos){
+            bandera = false;
+            for(int x = 0; x<afd.Mueves[estado].length;x++){
+                if(!afd.Mueves[estado][x].equals("---")){
+                    String conj = afd.Terminales.get(x);
+                    for (int y = 0;y<Conjuntos.size();y++){
+                        if(Conjuntos.get(y).nombre.equals(conj)){
+                            for(int z= 0;z<Conjuntos.get(y).valores.size();z++){
+                                if(letra.equals(Conjuntos.get(y).valores.get(z))){
+                                    bandera = true;
+                                    EstadoA = afd.Mueves[estado][x];
+                                    estado = posEstado(EstadoA,afd);
+                                    break;
+                                }
+                            }
+                            if (bandera){break;}
+                        }
+                    }
+                    if (bandera){break;}
+                }
+            }
+            if (!bandera){return false;}
+        }
+        
+        return bandera;
+    }
+    
+    public int posEstado(String s, AFD afd){
+        int pos = 0;
+        for(int x = 0; x < afd.Estados.size(); x++){
+            if(s.equals(afd.Estados.get(x))){
+                pos = x;
+                break;
+            }
+        }
+        return pos;
+    }
+    
+    public int obtenerPosIDen(String s){
+        int exp = 0;
+        for (int y = 0;y<NombresA.size();y++){
+            if(s.equals(NombresA.get(y))){
+                exp = y;
+                break;
+            }
+        }
+        return exp;
+    }
+    
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
         fdGuardar=new FileDialog(fdGuardar, "Guardar como", FileDialog.SAVE);
         fdGuardar.setVisible(true);
@@ -245,10 +321,6 @@ public class Interface extends javax.swing.JFrame {
         }
         txtEntrada.setText("");
     }//GEN-LAST:event_btnNuevoActionPerformed
-
-    private void btnAnteriorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnteriorActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnAnteriorActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         File archivo = new File(ruta);
@@ -325,7 +397,10 @@ public class Interface extends javax.swing.JFrame {
 
     private void btnGAutomatasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGAutomatasActionPerformed
         Arboles = new ArrayList<>();
+        Entradas = new ArrayList<>();
+        Conjuntos = new ArrayList<>();
         NombresA = new ArrayList<>();
+        AFDS = new ArrayList<>();
         Errores = new ArrayList<>();
         String entra = txtEntrada.getText();
         try {
@@ -335,6 +410,10 @@ public class Interface extends javax.swing.JFrame {
         } catch (Exception ex) {
             Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
         }
+        for(int x = 0; x < Conjuntos.size();x++){
+            Conjuntos.get(x).valores = obtenerValoresConj(Conjuntos.get(x));
+        }
+        txtSalida.setText("");
         if (!Arboles.isEmpty()){
             for (int x=0;x<Arboles.size();x++){
                 Hojas = new ArrayList<>();
@@ -342,14 +421,17 @@ public class Interface extends javax.swing.JFrame {
                 Estados = new ArrayList<>();
                 Terminales = new ArrayList<>();
                 EstadosL = new ArrayList<>();
+                Inicios = new ArrayList<>();
                 cant = 0;
                 mov = "";
                 graficarArbol(Arboles.get(x),"Arbol"+String.valueOf(x+1)+"-"+NombresA.get(x));
-                graficarAFND(Arboles.get(x),"AFND"+String.valueOf(x+1)+"-"+NombresA.get(x));
+                //graficarAFND(Arboles.get(x),"AFND"+String.valueOf(x+1)+"-"+NombresA.get(x));
                 generarTS(Arboles.get(x),"Siguientes"+String.valueOf(x+1)+"-"+NombresA.get(x));
                 generarTran("Trancisiones"+String.valueOf(x+1)+"-"+NombresA.get(x));
                 generarAFD("AFD"+String.valueOf(x+1)+"-"+NombresA.get(x));
-                txtSalida.setText("Graficos " + NombresA.get(x) + "Creados :D" );
+                AFD a = new AFD(NombresA.get(x), Mueves,EstadosL,Terminales);
+                AFDS.add(a);
+                txtSalida.setText(txtSalida.getText()+"\n"+"Graficos " + NombresA.get(x) + "Creados :D" );
             }
         }
         try {
@@ -358,6 +440,34 @@ public class Interface extends javax.swing.JFrame {
             Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnGAutomatasActionPerformed
+    
+    public ArrayList<String> obtenerValoresConj(conjunto conj){
+        ArrayList<String> aux = new ArrayList<>();
+        String[] datos = conj.con.split(",");
+        if (datos.length>1){
+            aux.addAll(Arrays.asList(datos));
+        }else{
+            byte[] ascii = datos[0].getBytes(StandardCharsets.US_ASCII);
+            int in = ascii[0]; int fi = ascii[2];
+            if((in>=48 && fi <= 57)||(in>=65 && fi <= 90)||(in>=97 && fi <= 122)){
+                for(int i = in; i <= fi; i++){
+                    aux.add(String.valueOf((char)i));
+                }
+            }else{
+                for(int i = in; i <= fi; i++){
+                    if(i<48 || i > 57){
+                        if(i<65 || i > 90){
+                            if(i<97 || i > 122){
+                                aux.add(String.valueOf((char)i));
+                            }
+                        }
+                    }
+                }
+            }
+            
+        }
+        return aux;
+    }
     
     /**
      * @param args the command line arguments
@@ -375,15 +485,11 @@ public class Interface extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        
         //</editor-fold>
 
         /* Create and display the form */
@@ -438,17 +544,13 @@ public class Interface extends javax.swing.JFrame {
             pw = new PrintWriter(fichero);
             pw.println("digraph G{");
             pw.println("rankdir=LR;");
-            bandera = true;
             act.hizq.getCantAFND();
-            pw.println("node [shape = doublecircle];"+ String.valueOf(cant)+";");
+            pw.println("node [shape = doublecircle];nodo"+ String.valueOf(cant)+";");
             pw.println("node [shape = circle];");
-            for (int x=0;x<(cant-1);x++){
+            for (int x=0;x<(cant);x++){
                 pw.println("nodo"+String.valueOf(x)+"[label=\""+String.valueOf(x)+"\"];");
             }
-            cant = 1;
-            inicio = 0;
-            fin = 0;
-            bandera = true;
+            cant = 0;
             act.hizq.getAFND();
             pw.println(mov);
             pw.println("}");
@@ -538,7 +640,7 @@ public class Interface extends javax.swing.JFrame {
         for (int x=0;x<Siguientes.size();x++){
             boolean bandera = false;
             for (int y=0;y<Estados.size();y++){
-                if (!Siguientes.get(x).equals(Estados.get(y))){bandera = true;} else{bandera = false;}
+                bandera = !Siguientes.get(x).equals(Estados.get(y));
             }
             if (bandera){Estados.add(Siguientes.get(x)); EstadosL.add("S"+String.valueOf(estado)); estado++;}
         }
@@ -593,8 +695,8 @@ public class Interface extends javax.swing.JFrame {
             for(int i=0;i<(Mueves.length);i++){
                 pw.println("<tr>");
                 pw.println("<td>"+EstadosL.get(i)+"{"+Estados.get(i)+"}</td>");
-                for (int j = 0; j < Mueves[i].length;j++){
-                    pw.println("<td>"+Mueves[i][j]+"</td>");
+                for (String Mueve : Mueves[i]) {
+                    pw.println("<td>" + Mueve + "</td>");
                 }
                 pw.println("</tr>");
             }
@@ -739,20 +841,15 @@ public class Interface extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAbrir;
     private javax.swing.JButton btnAnalizar;
-    private javax.swing.JButton btnAnterior;
     private javax.swing.JButton btnGAutomatas;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnGuardarC;
     private javax.swing.JButton btnNuevo;
-    private javax.swing.JButton btnSig;
-    private javax.swing.JComboBox<String> cbTipo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JPanel panImagen;
     private javax.swing.JTextArea txtEntrada;
     private javax.swing.JTextArea txtSalida;
     // End of variables declaration//GEN-END:variables
