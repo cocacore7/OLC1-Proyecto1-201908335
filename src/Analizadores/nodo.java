@@ -10,9 +10,11 @@ public class nodo {
     public String anulable;
     public String ant;
     public String sig;
+    public String inicio;
+    public String fin;
     public int id;
     
-    public nodo(nodo hizq, nodo hder, String valor, String hoja, String anulable, String ant, String sig, int id){
+    public nodo(nodo hizq, nodo hder, String valor, String hoja, String anulable, String ant, String sig,String inicio,String fin, int id){
         this.hizq=hizq;
         this.hder=hder;
         this.valor=valor;
@@ -20,6 +22,8 @@ public class nodo {
         this.anulable=anulable;
         this.ant=ant;
         this.sig=sig;
+        this.inicio=inicio;
+        this.fin=fin;
         this.id=id;
     }
     
@@ -82,92 +86,56 @@ public class nodo {
         Interface.Siguientes.set(pos-1, regreso);
     }
     
-    public void getAFND(){
-        if(hizq !=null){
-            if (valor.equals("*")){
-                Interface.mov+="nodo"+String.valueOf(Interface.cant)+"->nodo"+String.valueOf(Interface.cant+1)+"[ label = ε];\n";
-                Interface.Inicios.add(String.valueOf(Interface.cant));
-                Interface.cant++;
-            } else if (valor.equals("+")){
-                Interface.mov+="nodo"+String.valueOf(Interface.cant)+"->nodo"+String.valueOf(Interface.cant+1)+"[ label = ε];\n";
-                Interface.Inicios.add(String.valueOf(Interface.cant));
-                Interface.cant++;
-            } else if (valor.equals("?")){
-                Interface.mov+="nodo"+String.valueOf(Interface.cant)+"->nodo"+String.valueOf(Interface.cant+1)+"[ label = ε];\n";
-                Interface.Inicios.add(String.valueOf(Interface.cant));
-                Interface.cant++;
-            }else if (valor.equals("\\|")){
-                Interface.mov+="nodo"+String.valueOf(Interface.cant)+"->nodo"+String.valueOf(Interface.cant+1)+"[ label = ε];\n";
-                Interface.Inicios.add(String.valueOf(Interface.cant));
-                Interface.cant++;Interface.cant++;Interface.cant++;
-            }
-            hizq.getAFND();
-            if (valor.equals("*")){
-                Interface.mov+="nodo"+String.valueOf(Interface.cant)+"->nodo"+String.valueOf(Interface.cant+1)+"[ label = ε];\n";
-                int m = Integer.valueOf(Interface.Inicios.get(Interface.Inicios.size()-1));
-                Interface.mov+="nodo"+String.valueOf(Interface.cant)+"->nodo"+String.valueOf(m+1)+"[ label = ε];\n";
-                Interface.mov+="nodo"+String.valueOf(m)+"->nodo"+String.valueOf(Interface.cant+1)+"[ label = ε];\n";
-                Interface.Inicios.remove(Interface.Inicios.size()-1);
-                Interface.cant++;
-            } else if (valor.equals("+")){
-                Interface.mov+="nodo"+String.valueOf(Interface.cant)+"->nodo"+String.valueOf(Interface.cant+1)+"[ label = ε];\n";
-                int m = Integer.valueOf(Interface.Inicios.get(Interface.Inicios.size()-1));
-                Interface.mov+="nodo"+String.valueOf(Interface.cant)+"->nodo"+String.valueOf(m+1)+"[ label = ε];\n";
-                Interface.Inicios.remove(Interface.Inicios.size()-1);
-                Interface.cant++;
-            } else if (valor.equals("?")){
-                Interface.mov+="nodo"+String.valueOf(Interface.cant)+"->nodo"+String.valueOf(Interface.cant+1)+"[ label = ε];\n";
-                int m = Integer.valueOf(Interface.Inicios.get(Interface.Inicios.size()-1));
-                Interface.mov+="nodo"+String.valueOf(m)+"->nodo"+String.valueOf(Interface.cant+1)+"[ label = ε];\n";
-                Interface.Inicios.remove(Interface.Inicios.size()-1);
-                Interface.cant++;
-            }else if (valor.equals("\\|")){
-                Interface.mov+="nodo"+String.valueOf(Interface.cant)+"->nodo"+String.valueOf(Interface.cant+1)+"[ label = ε];\n";
-                int m = Integer.valueOf(Interface.Inicios.get(Interface.Inicios.size()-1));
-                Interface.mov+="nodo"+String.valueOf(m)+"->nodo"+String.valueOf(m+1)+"[ label = ε];\n";
-                Interface.mov+="nodo"+String.valueOf(m+2)+"->nodo"+String.valueOf(m+5)+"[ label = ε];\n";
-                Interface.mov+="nodo"+String.valueOf(m)+"->nodo"+String.valueOf(m+3)+"[ label = ε];\n";
-                Interface.mov+="nodo"+String.valueOf(m+4)+"->nodo"+String.valueOf(m+5)+"[ label = ε];\n";
-                Interface.Inicios.remove(Interface.Inicios.size()-1);
-                Interface.cant++;
-            }
-        }
-        if(hder!=null){
-            hder.getAFND();
-        }
+    public String getAFND(){
+        String etiqueta;
         if(hizq==null && hder==null){
-            Interface.mov+="nodo"+String.valueOf(Interface.cant)+"->nodo"+String.valueOf(Interface.cant + 1)+"[ label = \""+valor+"\"];\n";
-            Interface.cant++;
+            etiqueta = inicio+"->"+fin+"[label = "+'"'+valor+'"'+"];\n";
         }
-    }
-    
-    
-    public void getCantAFND(){
-        if(hder!=null){
-            hder.getCantAFND();
+        else {
+            if (valor.equals("*")){
+                etiqueta = inicio+"->"+fin+"[label = ε];\n";
+                etiqueta += inicio+"->"+hizq.inicio+"[label = ε];\n";
+                etiqueta += hizq.fin+"->"+fin+"[label = ε];\n";
+                etiqueta += hizq.fin+"->"+hizq.inicio+"[label = ε];\n";
+                
+            }else if (valor.equals("+")){
+                etiqueta = inicio+"->"+hizq.inicio+"[label = ε];\n";
+                etiqueta += hizq.fin+"->"+fin+"[label = ε];\n";
+                etiqueta += hizq.fin+"->"+hizq.inicio+"[label = ε];\n";
+            }else if (valor.equals("?")){
+                etiqueta = inicio+"->"+fin+"[label = ε];\n";
+                etiqueta += inicio+"->"+hizq.inicio+"[label = ε];\n";
+                etiqueta += hizq.fin+"->"+fin+"[label = ε];\n";
+            }else if (valor.equals("\\|")){
+                etiqueta = inicio+"->"+hizq.inicio+"[label = ε];\n";
+                etiqueta += inicio+"->"+hder.inicio+"[label = ε];\n";
+                etiqueta += hizq.fin+"->"+fin+"[label = ε];\n";
+                etiqueta += hder.fin+"->"+fin+"[label = ε];\n";
+            }else{
+                if(hder.valor.equals(".")){
+                    int valor = obtenerIniP(hder);
+                    etiqueta = hizq.fin+"->"+String.valueOf(valor)+"[label = ε];\n";
+                }else{
+                    etiqueta = hizq.fin+"->"+hder.inicio+"[label = ε];\n";
+                }
+            }
         }
         if(hizq !=null){
-            hizq.getCantAFND();
-            switch (valor) {
-                case "*":
-                    Interface.cant = Interface.cant + 2;
-                    break;
-                case "+":
-                    Interface.cant = Interface.cant + 2;
-                    break;
-                case "?":
-                    Interface.cant = Interface.cant + 2;
-                    break;
-                case "\\|":
-                    Interface.cant = Interface.cant + 3;
-                    break;
-                default:
-                    break;
-            }
+            etiqueta+=hizq.getAFND();
         }
-        if(hizq==null && hder==null){
-            Interface.cant++;
+        if(hder!=null){
+            etiqueta+=hder.getAFND();
         }
+        return etiqueta;
     }
     
+    public int obtenerIniP(nodo n){
+        int valor = 0;
+        if(n.hder.valor.equals(".")){
+            valor = obtenerIniP(n.hder);
+        }else{
+            valor = Integer.valueOf(n.hizq.inicio);
+        }
+        return valor;
+    }
 }

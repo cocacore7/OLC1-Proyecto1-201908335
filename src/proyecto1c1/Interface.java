@@ -32,9 +32,7 @@ public class Interface extends javax.swing.JFrame {
     public static ArrayList<String> EstadosL;
     public static ArrayList<String> Inicios;
     public static String Mueves[][];
-    public static int cant;
     public static int arch = 0;
-    public static String mov;
     
     public static String ruta = "./src/ArchivoNuevo.olc";
     public FileDialog fdGuardar;
@@ -422,10 +420,8 @@ public class Interface extends javax.swing.JFrame {
                 Terminales = new ArrayList<>();
                 EstadosL = new ArrayList<>();
                 Inicios = new ArrayList<>();
-                cant = 0;
-                mov = "";
                 graficarArbol(Arboles.get(x),"Arbol"+String.valueOf(x+1)+"-"+NombresA.get(x));
-                //graficarAFND(Arboles.get(x),"AFND"+String.valueOf(x+1)+"-"+NombresA.get(x));
+                graficarAFND(Arboles.get(x),"AFND"+String.valueOf(x+1)+"-"+NombresA.get(x));
                 generarTS(Arboles.get(x),"Siguientes"+String.valueOf(x+1)+"-"+NombresA.get(x));
                 generarTran("Trancisiones"+String.valueOf(x+1)+"-"+NombresA.get(x));
                 generarAFD("AFD"+String.valueOf(x+1)+"-"+NombresA.get(x));
@@ -544,15 +540,8 @@ public class Interface extends javax.swing.JFrame {
             pw = new PrintWriter(fichero);
             pw.println("digraph G{");
             pw.println("rankdir=LR;");
-            act.hizq.getCantAFND();
-            pw.println("node [shape = doublecircle];nodo"+ String.valueOf(cant)+";");
             pw.println("node [shape = circle];");
-            for (int x=0;x<(cant);x++){
-                pw.println("nodo"+String.valueOf(x)+"[label=\""+String.valueOf(x)+"\"];");
-            }
-            cant = 0;
-            act.hizq.getAFND();
-            pw.println(mov);
+            pw.println(act.hizq.getAFND());
             pw.println("}");
         } catch (IOException e) {
             System.out.println("error, no se realizo el archivo");

@@ -237,6 +237,7 @@ public class parser extends java_cup.runtime.lr_parser {
     public static nodo numeral;
     public int contador=0;
     public int hoja=1;
+    public int cant = 0;
 
     public void syntax_error(Symbol s)
     {
@@ -393,7 +394,7 @@ class CUP$parser$actions {
 		int var1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
 		int var1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		nodo var1 = (nodo)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		parser.raiz = var1; numeral = new nodo(null,null,"#",String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja),parser.contador); parser.contador++;if(raiz.anulable=="A"){raiz2 = new nodo(raiz,numeral,".","0","N",raiz.ant+","+numeral.ant,numeral.sig,parser.contador);}else{raiz2 = new nodo(raiz,numeral,".","0","N",raiz.ant,numeral.sig,parser.contador);}  parser.contador++; hoja = 1; contador = 0; Interface.Arboles.add(raiz2); Interface.NombresA.add(var2);
+		parser.raiz = var1; numeral = new nodo(null,null,"#",String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja),"","",parser.contador); parser.contador++;if(raiz.anulable=="A"){raiz2 = new nodo(raiz,numeral,".","0","N",raiz.ant+","+numeral.ant,numeral.sig,"","",parser.contador);}else{raiz2 = new nodo(raiz,numeral,".","0","N",raiz.ant,numeral.sig,"","",parser.contador);}  parser.contador++; hoja = 1; contador = 0; Interface.Arboles.add(raiz2); Interface.NombresA.add(var2); parser.cant = 0;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("REGULAR",6, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -408,7 +409,7 @@ class CUP$parser$actions {
 		int var2left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int var2right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		nodo var2 = (nodo)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		if(var1.anulable=="A" && var2.anulable=="A"){RESULT=new nodo(var1, var2, ".","0","A",var1.ant+","+var2.ant,var1.sig+","+var2.sig, parser.contador);}else if(var1.anulable=="A" && var2.anulable=="N"){RESULT=new nodo(var1, var2, ".","0","N",var1.ant+","+var2.ant,var2.sig, parser.contador);}else if(var1.anulable=="N" && var2.anulable=="A"){RESULT=new nodo(var1, var2, ".","0","N",var1.ant,var1.sig+","+var2.sig, parser.contador);}else if(var1.anulable=="N" && var2.anulable=="N"){RESULT=new nodo(var1, var2, ".","0","N",var1.ant,var2.sig, parser.contador);} parser.contador++;
+		if(var1.anulable=="A" && var2.anulable=="A"){RESULT=new nodo(var1, var2, ".","0","A",var1.ant+","+var2.ant,var1.sig+","+var2.sig,var1.fin,var2.inicio, parser.contador);}else if(var1.anulable=="A" && var2.anulable=="N"){RESULT=new nodo(var1, var2, ".","0","N",var1.ant+","+var2.ant,var2.sig,var1.fin,var2.inicio, parser.contador);}else if(var1.anulable=="N" && var2.anulable=="A"){RESULT=new nodo(var1, var2, ".","0","N",var1.ant,var1.sig+","+var2.sig,var1.fin,var2.inicio, parser.contador);}else if(var1.anulable=="N" && var2.anulable=="N"){RESULT=new nodo(var1, var2, ".","0","N",var1.ant,var2.sig,var1.fin,var2.inicio, parser.contador);} parser.contador++;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("EXPRESIONES",8, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -423,7 +424,7 @@ class CUP$parser$actions {
 		int var2left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int var2right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		nodo var2 = (nodo)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		if(var1.anulable=="A" || var2.anulable=="A"){RESULT=new nodo(var1, var2,"\\"+"|","0","A",var1.ant+","+var2.ant,var1.sig+","+var2.sig, parser.contador);}else{RESULT=new nodo(var1, var2,"\\"+"|","0","N",var1.ant+","+var2.ant,var1.sig+","+var2.sig,parser.contador);} parser.contador++;
+		if(var1.anulable=="A" || var2.anulable=="A"){RESULT=new nodo(var1, var2,"\\"+"|","0","A",var1.ant+","+var2.ant,var1.sig+","+var2.sig,String.valueOf(parser.cant),String.valueOf(parser.cant+1), parser.contador);}else{RESULT=new nodo(var1, var2,"\\"+"|","0","N",var1.ant+","+var2.ant,var1.sig+","+var2.sig,String.valueOf(parser.cant),String.valueOf(parser.cant+1), parser.contador);} parser.contador++; parser.cant = parser.cant + 2;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("EXPRESIONES",8, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -435,7 +436,7 @@ class CUP$parser$actions {
 		int var1left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int var1right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		nodo var1 = (nodo)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		if(var1.anulable=="N"){RESULT=new nodo(var1, null, "+","0","N",var1.ant,var1.sig, parser.contador);}else{RESULT=new nodo(var1, null, "+","0","A",var1.ant,var1.sig, parser.contador);} parser.contador++;
+		if(var1.anulable=="N"){RESULT=new nodo(var1, null, "+","0","N",var1.ant,var1.sig,String.valueOf(parser.cant),String.valueOf(parser.cant+1), parser.contador);}else{RESULT=new nodo(var1, null, "+","0","A",var1.ant,var1.sig,String.valueOf(parser.cant),String.valueOf(parser.cant+1), parser.contador);} parser.contador++; parser.cant = parser.cant + 2;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("EXPRESIONES",8, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -447,7 +448,7 @@ class CUP$parser$actions {
 		int var1left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int var1right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		nodo var1 = (nodo)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		RESULT=new nodo(var1, null, "*","0","A",var1.ant,var1.sig, parser.contador); parser.contador++;
+		RESULT=new nodo(var1, null, "*","0","A",var1.ant,var1.sig,String.valueOf(parser.cant),String.valueOf(parser.cant+1), parser.contador); parser.contador++; parser.cant = parser.cant + 2;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("EXPRESIONES",8, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -459,7 +460,7 @@ class CUP$parser$actions {
 		int var1left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int var1right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		nodo var1 = (nodo)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		RESULT=new nodo(var1, null, "?","0","A",var1.ant,var1.sig, parser.contador); parser.contador++;
+		RESULT=new nodo(var1, null, "?","0","A",var1.ant,var1.sig,String.valueOf(parser.cant),String.valueOf(parser.cant+1), parser.contador); parser.contador++; parser.cant = parser.cant + 2;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("EXPRESIONES",8, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -471,7 +472,7 @@ class CUP$parser$actions {
 		int var1left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int var1right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		String var1 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		RESULT=new nodo(null, null, var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja), parser.contador); parser.contador++; parser.hoja++;
+		RESULT=new nodo(null, null, var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja),String.valueOf(parser.cant),String.valueOf(parser.cant+1), parser.contador); parser.contador++; parser.hoja++; parser.cant = parser.cant + 2;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("EXPRESIONES",8, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -483,7 +484,7 @@ class CUP$parser$actions {
 		int var1left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int var1right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		String var1 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		RESULT=new nodo(null, null, var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja), parser.contador); parser.contador++; parser.hoja++;
+		RESULT=new nodo(null, null, var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja),String.valueOf(parser.cant),String.valueOf(parser.cant+1), parser.contador); parser.contador++; parser.hoja++; parser.cant = parser.cant + 2;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("EXPRESIONES",8, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -495,7 +496,7 @@ class CUP$parser$actions {
 		int var1left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int var1right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		String var1 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		RESULT=new nodo(null, null, var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja), parser.contador); parser.contador++; parser.hoja++;
+		RESULT=new nodo(null, null, var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja),String.valueOf(parser.cant),String.valueOf(parser.cant+1), parser.contador); parser.contador++; parser.hoja++; parser.cant = parser.cant + 2;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("EXPRESIONES",8, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -507,7 +508,7 @@ class CUP$parser$actions {
 		int var1left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int var1right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		String var1 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		RESULT=new nodo(null, null,"\\"+var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja), parser.contador); parser.contador++; parser.hoja++;
+		RESULT=new nodo(null, null,"\\"+var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja),String.valueOf(parser.cant),String.valueOf(parser.cant+1), parser.contador); parser.contador++; parser.hoja++; parser.cant = parser.cant + 2;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("EXPRESIONES",8, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -519,7 +520,7 @@ class CUP$parser$actions {
 		int var1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
 		int var1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		String var1 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		RESULT=new nodo(null, null, var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja), parser.contador); parser.contador++; parser.hoja++;
+		RESULT=new nodo(null, null, var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja),String.valueOf(parser.cant),String.valueOf(parser.cant+1), parser.contador); parser.contador++; parser.hoja++; parser.cant = parser.cant + 2;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("EXPRESIONES",8, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
