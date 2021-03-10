@@ -50,10 +50,12 @@ INICIO::=llavesabre CUERPO1 porcentaje porcentaje porcentaje porcentaje CUERPO2 
 CUERPO1::=CUERPO1 CONJUNTO
          |CUERPO1 REGULAR
          |CONJUNTO
-         |REGULAR;
+         |REGULAR
+         |error;
 
 CUERPO2::=CUERPO2 VALIDARCADENA
-         |VALIDARCADENA;
+         |VALIDARCADENA
+         |error;
 
 CONJUNTO::=conj dospuntos identificador:var1 menos mayor CUERPOCONJUNTO:var2 puntocoma {:RESULT=new conjunto(var1,var2,null); Interface.Conjuntos.add(RESULT);:};
 
@@ -70,15 +72,13 @@ EXPRESIONES::= punto EXPRESIONES:var1 EXPRESIONES:var2              {:if(var1.an
               |cadena:var1                                          {:RESULT=new nodo(null, null, var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja),String.valueOf(parser.cant),String.valueOf(parser.cant+1), parser.contador); parser.contador++; parser.hoja++; parser.cant = parser.cant + 2;:}
               |entero:var1                                          {:RESULT=new nodo(null, null, var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja),String.valueOf(parser.cant),String.valueOf(parser.cant+1), parser.contador); parser.contador++; parser.hoja++; parser.cant = parser.cant + 2;:}
               |especial:var1                                        {:RESULT=new nodo(null, null,"\\"+var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja),String.valueOf(parser.cant),String.valueOf(parser.cant+1), parser.contador); parser.contador++; parser.hoja++; parser.cant = parser.cant + 2;:}
-              |llavesabre identificador:var1 llavescierra           {:RESULT=new nodo(null, null, var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja),String.valueOf(parser.cant),String.valueOf(parser.cant+1), parser.contador); parser.contador++; parser.hoja++; parser.cant = parser.cant + 2;:}
-;
+              |llavesabre identificador:var1 llavescierra           {:RESULT=new nodo(null, null, var1,String.valueOf(parser.hoja),"N",String.valueOf(parser.hoja),String.valueOf(parser.hoja),String.valueOf(parser.cant),String.valueOf(parser.cant+1), parser.contador); parser.contador++; parser.hoja++; parser.cant = parser.cant + 2;:};
 
 CUERPOCONJUNTO::= LISTA:var1                    {:RESULT=var1;:}
                  |casa:var1                     {:RESULT=var1;:}
                  |casb:var1                     {:RESULT=var1;:}
                  |casc:var1                     {:RESULT=var1;:}
-                 |VALOR:var1 pestan:var3 VALOR:var2  {:RESULT=var1+var3+var2;:}
-;
+                 |VALOR:var1 pestan:var3 VALOR:var2  {:RESULT=var1+var3+var2;:};
 
 LISTA  ::= LISTA:var1 coma:var3 letra:var2           {:RESULT=var1 + var3 + var2;:}
           |LISTA:var1 coma:var3 entero:var2          {:RESULT=var1 + var3 + var2;:}

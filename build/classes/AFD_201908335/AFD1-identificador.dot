@@ -1,0 +1,10 @@
+digraph G{
+rankdir=LR;
+node [shape = doublecircle];S1;
+node [shape = circle];
+nodo0[label="S0"];
+nodo0->S1[ label = "letra"];
+S1->S1[ label = "letra"];
+S1->S1[ label = "_"];
+S1->S1[ label = "digito"];
+}

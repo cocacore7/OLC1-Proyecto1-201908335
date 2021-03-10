@@ -1,0 +1,31 @@
+digraph G{
+ graph [pad="0.5", nodesep="0.5", ranksep="2"];
+node [shape=plain]
+Foo [label=<
+<table border="0" cellborder="1" cellspacing="0">
+<tr>
+<td>HOJAS</td>
+<td>SIGUIENTES</td>
+</tr>
+<tr>
+<td>1) letra</td>
+<td>2,3,4,5</td>
+</tr>
+<tr>
+<td>2) _</td>
+<td>2,3,4,5</td>
+</tr>
+<tr>
+<td>3) letra</td>
+<td>2,3,4,5</td>
+</tr>
+<tr>
+<td>4) digito</td>
+<td>2,3,4,5</td>
+</tr>
+<tr>
+<td>#</td>
+<td>---</td>
+</tr>
+</table>>];
+}

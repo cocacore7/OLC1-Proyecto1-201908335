@@ -1,0 +1,10 @@
+digraph G{
+ graph [pad="0.5", nodesep="0.5", ranksep="2"];
+node [shape=plain]
+Foo [label=<
+<table border="0" cellborder="1" cellspacing="0">
+<tr>
+<td>ESTADO</td>
+<td>digito</td>
+<td>.</td>
+</tr>

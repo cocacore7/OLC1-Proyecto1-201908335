@@ -1,0 +1,16 @@
+digraph G{
+rankdir=LR;
+node [shape = circle];
+9->10[label = ε];
+8->6[label = ε];
+7->9[label = ε];
+7->6[label = ε];
+6->7[label = "digito"];
+11->14[label = ε];
+10->11[label = "."];
+14->12[label = ε];
+13->15[label = ε];
+13->12[label = ε];
+12->13[label = "digito"];
+
+}

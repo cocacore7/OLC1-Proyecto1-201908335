@@ -408,33 +408,42 @@ public class Interface extends javax.swing.JFrame {
         } catch (Exception ex) {
             Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
         }
-        for(int x = 0; x < Conjuntos.size();x++){
-            Conjuntos.get(x).valores = obtenerValoresConj(Conjuntos.get(x));
-        }
-        txtSalida.setText("");
-        if (!Arboles.isEmpty()){
-            for (int x=0;x<Arboles.size();x++){
-                Hojas = new ArrayList<>();
-                Siguientes = new ArrayList<>();
-                Estados = new ArrayList<>();
-                Terminales = new ArrayList<>();
-                EstadosL = new ArrayList<>();
-                Inicios = new ArrayList<>();
-                graficarArbol(Arboles.get(x),"Arbol"+String.valueOf(x+1)+"-"+NombresA.get(x));
-                graficarAFND(Arboles.get(x),"AFND"+String.valueOf(x+1)+"-"+NombresA.get(x));
-                generarTS(Arboles.get(x),"Siguientes"+String.valueOf(x+1)+"-"+NombresA.get(x));
-                generarTran("Trancisiones"+String.valueOf(x+1)+"-"+NombresA.get(x));
-                generarAFD("AFD"+String.valueOf(x+1)+"-"+NombresA.get(x));
-                AFD a = new AFD(NombresA.get(x), Mueves,EstadosL,Terminales);
-                AFDS.add(a);
-                txtSalida.setText(txtSalida.getText()+"\n"+"Graficos " + NombresA.get(x) + "Creados :D" );
+        if(Errores.isEmpty()){
+            for(int x = 0; x < Conjuntos.size();x++){
+                Conjuntos.get(x).valores = obtenerValoresConj(Conjuntos.get(x));
+            }
+            txtSalida.setText("");
+            if (!Arboles.isEmpty()){
+                for (int x=0;x<Arboles.size();x++){
+                    Hojas = new ArrayList<>();
+                    Siguientes = new ArrayList<>();
+                    Estados = new ArrayList<>();
+                    Terminales = new ArrayList<>();
+                    EstadosL = new ArrayList<>();
+                    Inicios = new ArrayList<>();
+                    graficarArbol(Arboles.get(x),"Arbol"+String.valueOf(x+1)+"-"+NombresA.get(x));
+                    graficarAFND(Arboles.get(x),"AFND"+String.valueOf(x+1)+"-"+NombresA.get(x));
+                    generarTS(Arboles.get(x),"Siguientes"+String.valueOf(x+1)+"-"+NombresA.get(x));
+                    generarTran("Trancisiones"+String.valueOf(x+1)+"-"+NombresA.get(x));
+                    generarAFD("AFD"+String.valueOf(x+1)+"-"+NombresA.get(x));
+                    AFD a = new AFD(NombresA.get(x), Mueves,EstadosL,Terminales);
+                    AFDS.add(a);
+                    txtSalida.setText(txtSalida.getText()+"\n"+"Graficos " + NombresA.get(x) + "Creados :D" );
+                }
+            }else{
+                try {
+                    generarHTML();
+                } catch (IOException ex) {
+                    Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            try {
+                generarHTML();
+            } catch (IOException ex) {
+                Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        try {
-            generarHTML();
-        } catch (IOException ex) {
-            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
     }//GEN-LAST:event_btnGAutomatasActionPerformed
     
     public ArrayList<String> obtenerValoresConj(conjunto conj){
@@ -445,9 +454,21 @@ public class Interface extends javax.swing.JFrame {
         }else{
             byte[] ascii = datos[0].getBytes(StandardCharsets.US_ASCII);
             int in = ascii[0]; int fi = ascii[2];
-            if((in>=48 && fi <= 57)||(in>=65 && fi <= 90)||(in>=97 && fi <= 122)){
-                for(int i = in; i <= fi; i++){
-                    aux.add(String.valueOf((char)i));
+            if((in>=48 && in <= 57)||(in>=65 && in <= 90)||(in>=97 && in <= 122)){
+                if((fi>=48 && fi <= 57)||(fi>=65 && fi <= 90)||(fi>=97 && fi <= 122)){
+                    if(in>fi){
+                        for(int i = in; i >= fi; i--){
+                            if((i>=48 && i <= 57)||(i>=65 && i <= 90)||(i>=97 && i <= 122)){
+                                aux.add(String.valueOf((char)i));
+                            }
+                        }
+                    }else{
+                        for(int i = in; i <= fi; i++){
+                            if((i>=48 && i <= 57)||(i>=65 && i <= 90)||(i>=97 && i <= 122)){
+                                aux.add(String.valueOf((char)i));
+                            }
+                        }
+                    }
                 }
             }else{
                 for(int i = in; i <= fi; i++){
